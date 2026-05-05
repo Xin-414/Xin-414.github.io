@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Xin Luo — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F5F5F7;--fg:#1D1D1F;--mid:#424245;--muted:#86868B;
+  --border:rgba(0,0,0,.08);--font:'Inter',system-ui,sans-serif;
+  --serif:'Playfair Display',Georgia,serif;--radius:1.5rem;
+  --max:1100px;--px:clamp(24px,6vw,100px);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);background:var(--bg);color:var(--fg);overflow-x:hidden;
+  background-image:linear-gradient(rgba(0,0,0,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.03) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--px)}
+
+/* ══ NAV ══ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  background:rgba(245,245,247,.85);backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--border);transition:box-shadow .3s;
+}
+nav.scrolled{box-shadow:0 1px 24px rgba(0,0,0,.07)}
+.nav-inner{
+  max-width:var(--max);margin:0 auto;padding:0 var(--px);
+  height:52px;display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{font-size:.92rem;font-weight:700;letter-spacing:-.02em;cursor:pointer;transition:opacity .2s}
+.nav-logo:hover{opacity:.5}
+.nav-r{display:flex;align-items:center;gap:28px}
+.nav-r a{font-size:.88rem;font-weight:500;color:var(--muted);transition:color .2s;cursor:pointer}
+.nav-r a:hover,.nav-r a.active{color:var(--fg)}
+.lang-btn{font-size:.8rem;border:1px solid rgba(0,0,0,.15);padding:5px 14px;border-radius:999px;background:none;cursor:pointer;color:var(--fg);font-family:var(--font);transition:all .2s}
+.lang-btn:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+/* ══ PAGE SYSTEM ══ */
+/* home = scrollable; others = switched */
+#view-home{display:block}
+#view-experiments,#view-about,#view-case{display:none}
+
+/* ══════════════════════
+   HOME SCROLL VIEW
+══════════════════════ */
+
+/* HERO */
+.hero{padding-top:52px;min-height:100svh;display:flex;flex-direction:column}
+.hero-body{
+  flex:1;display:flex;flex-direction:column;justify-content:flex-end;
+  max-width:var(--max);margin:0 auto;width:100%;padding:0 var(--px) 24px;
+}
+.hero-eye{
+  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  margin-bottom:16px;display:flex;align-items:center;gap:10px;
+}
+.hero-eye::before{content:'';width:24px;height:1px;background:var(--muted)}
+.hero-name{
+  font-size:clamp(70px,13vw,190px);
+  font-weight:700;line-height:.86;letter-spacing:-.05em;
+}
+.hero-name .outline{display:block;-webkit-text-stroke:2.5px var(--fg);color:transparent}
+
+/* info bar */
+.hero-bar{border-top:1px solid var(--border)}
+.hbi{max-width:var(--max);margin:0 auto;padding:0 var(--px);display:grid;grid-template-columns:repeat(3,1fr)}
+.hb{padding:18px 0;padding-right:28px;margin-right:28px;border-right:1px solid var(--border)}
+.hb:last-child{border-right:none;padding-right:0;margin-right:0}
+.hb-lbl{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.hb-val{font-size:.88rem;font-weight:500;line-height:1.5;margin-bottom:2px}
+.hb-sub{font-size:.76rem;color:var(--muted)}
+.hb-link{display:inline-flex;align-items:center;gap:4px;font-size:.8rem;border-bottom:1px solid transparent;margin-bottom:4px;width:fit-content;transition:border-color .2s;cursor:pointer}
+.hb-link:hover{border-color:var(--fg)}
+@media(max-width:580px){
+  .hbi{grid-template-columns:1fr}
+  .hb{border-right:none;border-bottom:1px solid var(--border);padding-right:0;margin-right:0;padding-bottom:14px}
+  .hb:last-child{border-bottom:none}
+}
+
+/* scroll hint */
+.scroll-hint{display:flex;flex-direction:column;align-items:center;gap:7px;padding:16px 0 14px;cursor:pointer;color:var(--muted);animation:bob 2.4s var(--ease) infinite}
+.sh-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase}
+.sh-dest{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg);opacity:.45}
+.sh-arrow{width:24px;height:24px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;transition:transform .3s var(--ease),background .2s}
+.scroll-hint:hover .sh-arrow{transform:translateY(4px);background:var(--fg);color:var(--bg)}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* PROJECTS on home */
+.home-projects{padding:56px 0 80px}
+.sec-hd{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:44px}
+.sec-lbl{font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+.proj-item{margin-bottom:72px}
+.proj-item:last-child{margin-bottom:0}
+.proj-top{display:grid;grid-template-columns:1fr 2fr;gap:44px;align-items:start;margin-bottom:22px}
+.proj-num{font-size:.6rem;letter-spacing:.12em;color:var(--muted);margin-bottom:8px}
+.proj-title{font-size:clamp(1.7rem,3.2vw,2.6rem);font-weight:700;letter-spacing:-.03em;line-height:1.05;margin-bottom:8px}
+.proj-date{font-size:.76rem;color:var(--muted);letter-spacing:.04em}
+.proj-desc{font-size:1rem;line-height:1.8;color:var(--mid);margin-bottom:14px}
+.proj-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
+.proj-tag{font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--border);border-radius:2px;color:var(--muted)}
+.view-cs{
+  display:inline-flex;align-items:center;gap:6px;font-size:.86rem;font-weight:600;
+  border-bottom:1.5px solid var(--fg);padding-bottom:2px;cursor:pointer;
+  transition:opacity .2s,padding-right .25s var(--ease);
+}
+.view-cs:hover{opacity:.5;padding-right:7px}
+
+/* project image */
+.proj-img{
+  width:100%;aspect-ratio:16/8;border-radius:var(--radius);overflow:hidden;
+  display:flex;align-items:center;justify-content:center;border:1px solid var(--border);
+  font-size:.66rem;font-family:monospace;letter-spacing:.1em;color:rgba(0,0,0,.22);
+  position:relative;cursor:pointer;
+  transition:transform .5s var(--ease),box-shadow .45s var(--ease);
+}
+.proj-img:hover{transform:scale(1.015);box-shadow:0 22px 64px rgba(0,0,0,.12)}
+.proj-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.img-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;transition:background .3s}
+.proj-img:hover .img-overlay{background:rgba(0,0,0,.18)}
+.img-overlay-lbl{color:#fff;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s var(--ease);font-family:var(--font)}
+.proj-img:hover .img-overlay-lbl{opacity:1;transform:translateY(0)}
+
+.c1{background:linear-gradient(135deg,#e8e3f5,#cdc0e8)}
+.c2{background:linear-gradient(135deg,#ddeef5,#b5d4e2)}
+.c3{background:linear-gradient(135deg,#f5ede0,#e0cdb3)}
+.c4{background:linear-gradient(135deg,#e0f5e5,#b5dcc0)}
+@media(max-width:620px){.proj-top{grid-template-columns:1fr;gap:16px}.proj-img{aspect-ratio:4/3}}
+
+/* ══════════════════════
+   EXPERIMENTS VIEW
+══════════════════════ */
+.exp-view{padding-top:52px;min-height:100vh}
+.exp-wrap{padding:56px 0 80px}
+.exp-item{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;padding:44px 0;border-top:1px solid var(--border)}
+.exp-item:last-child{border-bottom:1px solid var(--border)}
+.exp-item:nth-child(even) .exp-txt{order:2}
+.exp-item:nth-child(even) .exp-vis{order:1}
+.exp-num{font-size:.6rem;letter-spacing:.12em;color:var(--muted);margin-bottom:12px}
+.exp-title{font-size:clamp(1.2rem,2.2vw,1.75rem);font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
+.exp-desc{font-size:.9rem;color:var(--mid);line-height:1.75}
+.exp-img{width:100%;aspect-ratio:4/3;border-radius:1.25rem;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);font-size:.64rem;font-family:monospace;letter-spacing:.1em;color:rgba(0,0,0,.22);position:relative;transition:transform .5s var(--ease),box-shadow .4s var(--ease)}
+.exp-img:hover{transform:scale(1.025);box-shadow:0 16px 48px rgba(0,0,0,.1)}
+.exp-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+@media(max-width:620px){.exp-item{grid-template-columns:1fr}.exp-item:nth-child(even) .exp-txt,.exp-item:nth-child(even) .exp-vis{order:unset}}
+
+/* ══════════════════════
+   ABOUT VIEW
+══════════════════════ */
+.about-view{padding-top:52px;min-height:100vh}
+.about-inner{padding:56px 0 80px;display:grid;grid-template-columns:300px 1fr;gap:60px;align-items:start}
+@media(max-width:760px){.about-inner{grid-template-columns:1fr;gap:36px}}
+.about-photo{width:100%;aspect-ratio:3/4;border-radius:var(--radius);overflow:hidden;background:linear-gradient(160deg,#e0dcd8,#cac4be);display:flex;align-items:center;justify-content:center;font-size:.64rem;font-family:monospace;letter-spacing:.1em;color:rgba(0,0,0,.28);position:relative}
+.about-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.about-big{font-size:clamp(1.05rem,2vw,1.42rem);font-weight:400;line-height:1.65;letter-spacing:-.01em;margin-bottom:20px}
+.about-big strong{font-weight:600}
+.about-body{font-size:.86rem;color:var(--muted);line-height:1.9;margin-bottom:32px}
+.tl{border-left:1px solid var(--border);padding-left:20px;margin-bottom:32px}
+.tl-lbl{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.tl-item{margin-bottom:20px}
+.tl-date{font-size:.62rem;letter-spacing:.08em;color:var(--muted);margin-bottom:3px}
+.tl-title{font-size:.88rem;font-weight:600;margin-bottom:2px}
+.tl-org{font-size:.78rem;color:var(--muted)}
+.tl-desc{font-size:.74rem;color:var(--muted);margin-top:3px;line-height:1.55}
+.clinks{border-top:1px solid var(--border)}
+.cl{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border);font-size:.84rem;transition:opacity .2s,padding-left .2s;cursor:pointer}
+.cl:hover{opacity:.45;padding-left:6px}
+
+/* ══════════════════════
+   CASE STUDY VIEW
+══════════════════════ */
+.case-view{padding-top:52px;min-height:100vh}
+.back-btn{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:color .2s,gap .2s;padding:14px 0}
+.back-btn:hover{color:var(--fg);gap:12px}
+.cs-hero-img{width:100%;aspect-ratio:16/7;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-size:.66rem;font-family:monospace;letter-spacing:.1em;color:rgba(0,0,0,.22)}
+.cs-hero-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+.cs-body{max-width:var(--max);margin:0 auto;padding:0 var(--px)}
+.cs-intro{display:grid;grid-template-columns:3fr 2fr;gap:48px;padding:44px 0 36px;border-bottom:1px solid var(--border)}
+@media(max-width:620px){.cs-intro{grid-template-columns:1fr;gap:24px}}
+.cs-title{font-size:clamp(2rem,5vw,3.6rem);font-weight:700;letter-spacing:-.04em;line-height:.95;margin-bottom:10px}
+.cs-subtitle{font-size:.84rem;color:var(--muted);margin-bottom:18px}
+.cs-ov-lbl{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.cs-ov-body{font-size:.92rem;line-height:1.8;color:var(--mid)}
+.cs-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-content:start}
+.cs-meta-lbl{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.cs-meta-val{font-size:.84rem;font-weight:500;line-height:1.5}
+.cs-meta-val a{color:inherit;border-bottom:1px solid rgba(0,0,0,.25);transition:opacity .2s,border-color .2s}
+.cs-meta-val a:hover{opacity:.65;border-bottom-color:var(--fg)}
+
+.cs-sec{padding:52px 0;border-bottom:1px solid var(--border)}
+.cs-sec:last-child{border-bottom:none;padding-bottom:80px}
+.cs-sec-tag{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.cs-sec-head{font-size:clamp(1.8rem,4vw,3rem);font-weight:700;letter-spacing:-.035em;line-height:1;margin-bottom:18px}
+.cs-sec-sub{font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);margin-bottom:10px}
+.cs-sec-body{font-size:.9rem;line-height:1.85;color:var(--mid);max-width:680px}
+.cs-img-full{width:100%;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;margin-top:26px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.66rem;font-family:monospace;letter-spacing:.1em;color:rgba(0,0,0,.22);position:relative}
+.cs-img-full img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* Case-study body images: natural aspect (no forced crop). Hero + home cards keep fixed ratios above. */
+.cs-img-full.cs-img-auto{aspect-ratio:unset;min-height:0;display:block;padding:20px;text-align:left;font-size:.72rem;line-height:1.5;color:var(--muted)}
+.cs-img-full.cs-img-auto:has(> img){padding:0}
+.cs-img-full.cs-img-auto img{position:relative;inset:auto;width:100%;max-width:100%;height:auto;object-fit:contain;display:block;border-radius:var(--radius)}
+/* Stacked case images (e.g. prototype + UI) */
+.cs-img-stack{display:flex;flex-direction:column;gap:16px;margin-top:26px}
+.cs-img-stack .cs-img-full{margin-top:0!important}
+/* ElderPath-style: vertical UI boards, slightly wider column, natural aspect preserved */
+.cs-img-stack-detail{display:flex;flex-direction:column;gap:22px;margin-top:26px;max-width:min(960px,100%);margin-left:auto;margin-right:auto;width:100%}
+.cs-img-stack-detail .cs-img-full{margin-top:0!important}
+/* PNG/boards: blur usually = source too small for layout width. Export width ≥ 2× content column (~2200px for 1100px site). Keep browser default scaling. */
+.case-view img.case-img{vertical-align:middle;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+/* Transparent PNGs: match page surface (#F5F5F7) instead of gradient placeholders */
+.proj-img:has(>img),.cs-hero-img:has(>img){background:var(--bg)!important}
+.cs-img-full.cs-img-auto:has(>img){background:var(--bg)}
+.cs-two-col{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:26px}
+@media(max-width:580px){.cs-two-col{grid-template-columns:1fr}}
+/* Case: observation (large) + data board (narrow) */
+.cs-img-row-asym{display:grid;grid-template-columns:2fr 1fr;gap:36px;margin-top:26px;align-items:start}
+@media(max-width:900px){.cs-img-row-asym{grid-template-columns:1fr}}
+/* Case: map UI 2×2 */
+.cs-map-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
+@media(max-width:580px){.cs-map-grid{grid-template-columns:1fr}}
+.cs-delivs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+@media(max-width:580px){.cs-delivs{grid-template-columns:1fr}}
+.cs-deliv{padding:20px;border:1px solid var(--border);border-radius:1.1rem;background:rgba(255,255,255,.6)}
+.cs-deliv-num{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.cs-deliv-title{font-size:.88rem;font-weight:600;margin-bottom:4px}
+.cs-deliv-desc{font-size:.76rem;color:var(--muted);line-height:1.55}
+
+/* ══ FOOTER ══ */
+footer{border-top:1px solid var(--border);padding:22px 0}
+.footer-inner{max-width:var(--max);margin:0 auto;padding:0 var(--px);display:flex;justify-content:space-between;align-items:center}
+.footer-left h2{font-family:var(--serif);font-style:italic;font-size:1.25rem;font-weight:500;margin-bottom:6px}
+.footer-links{display:flex;gap:16px;font-size:.76rem;color:var(--muted)}
+.footer-links a{transition:color .2s}.footer-links a:hover{color:var(--fg)}
+.footer-copy{font-size:.64rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+
+/* page fade */
+.fade-in{animation:fadeUp .4s var(--ease) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="showHome()">Xin Luo.</div>
+    <div class="nav-r">
+      <a onclick="goToProjects()" id="nav-home" class="active" data-en="Projects" data-zh="项目">Projects</a>
+      <a onclick="showView('experiments','nav-exp')" id="nav-exp" data-en="Experiments" data-zh="实验">Experiments</a>
+      <a onclick="showView('about','nav-about')" id="nav-about" data-en="About" data-zh="关于">About</a>
+      <button class="lang-btn" onclick="toggleLang()">中文</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ████ HOME (Hero + Projects scroll) ████ -->
+<div id="view-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-body">
+      <div class="hero-eye" data-en="Hello, I'm" data-zh="你好，我是"></div>
+      <div class="hero-name">
+        XIN
+        <span class="outline">LUO.</span>
+      </div>
+    </div>
+    <div class="hero-bar">
+      <div class="hbi">
+        <div class="hb">
+          <div class="hb-lbl" data-en="Focus" data-zh="方向"></div>
+          <div class="hb-val" data-en="Product · AI · IoT · UX" data-zh="产品 · AI · 物联网 · UX"></div>
+          <div class="hb-sub" data-en="MSTI · GIX (UW + Tsinghua) · Connected Devices" data-zh="MSTI · GIX（华大 + 清华）· Connected Devices 方向"></div>
+        </div>
+        <div class="hb">
+          <div class="hb-lbl" data-en="Status" data-zh="状态"></div>
+          <div class="hb-val" data-en="PM internships · 2026 summer or daily" data-zh="产品实习 · 2026 暑期或日常"></div>
+          <div class="hb-sub" data-en="Bellevue, WA" data-zh="华盛顿州贝尔维尤"></div>
+        </div>
+        <div class="hb">
+          <div class="hb-lbl" data-en="Connect" data-zh="联系"></div>
+          <a class="hb-link" href="mailto:luoxin0414@gmail.com">luoxin0414@gmail.com ↗</a><br>
+          <a class="hb-link" href="https://www.linkedin.com/in/xin-luo-lx0414" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+          <a class="hb-link" href="tel:+14256239223" style="margin-left:12px">+1 (425) 623-9223 ↗</a>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint" onclick="document.getElementById('home-projects').scrollIntoView({behavior:'smooth'})">
+      <span class="sh-label" data-en="scroll to explore" data-zh="向下探索"></span>
+      <span class="sh-dest">Projects ↓</span>
+      <div class="sh-arrow">↓</div>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div id="home-projects" class="home-projects">
+    <div class="wrap">
+      <div class="sec-hd">
+        <span class="sec-lbl" data-en="Selected Work" data-zh="精选项目"></span>
+        <span class="sec-lbl" id="pc"></span>
+      </div>
+      <div id="proj-list"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-left">
+        <h2 data-en="Let's connect." data-zh="保持联系。"></h2>
+        <div class="footer-links">
+          <a href="mailto:luoxin0414@gmail.com">Email</a>
+          <a href="https://www.linkedin.com/in/xin-luo-lx0414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="tel:+14256239223">Phone</a>
+        </div>
+      </div>
+      <div class="footer-copy">© <span id="yr"></span> Xin Luo</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ████ EXPERIMENTS ████ -->
+<div id="view-experiments">
+  <div class="exp-view">
+    <div class="wrap">
+      <div class="exp-wrap">
+        <div class="sec-hd">
+          <span class="sec-lbl" data-en="Experiments" data-zh="实验"></span>
+          <span class="sec-lbl" style="font-size:.7rem;letter-spacing:0;text-transform:none;color:var(--muted)" data-en="In-progress ideas." data-zh="进行中的探索。"></span>
+        </div>
+        <div id="exp-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ████ ABOUT ████ -->
+<div id="view-about">
+  <div class="about-view">
+    <div class="wrap">
+      <div class="sec-hd" style="margin-top:0;padding-top:0">
+        <span class="sec-lbl" data-en="About" data-zh="关于"></span>
+      </div>
+      <div class="about-inner">
+        <div>
+          <div class="about-photo">
+            <img src="assets/My-photo.jpg" alt="Xin Luo"/>
+          </div>
+        </div>
+        <div>
+          <div class="about-big" data-en="Graduate student building products at the intersection of <strong>AI, IoT, and human-centered design</strong> — from user research to hardware prototypes." data-zh="研究生，在 <strong>AI、物联网与以人为本的设计</strong>交叉处做产品——从用户研究到硬件原型。"></div>
+          <div class="about-body" data-en="I'm Xin Luo, pursuing the <strong>M.S. in Technology Innovation (MSTI)</strong> at the Global Innovation Exchange (GIX) — a joint program of the University of Washington and Tsinghua University in Bellevue, WA. My focus is the Connected Devices track: embedded systems, IoT, hardware–software integration, and user-centered design. I hold a B.Arch from Nanchang University and am seeking product management internships in AI or IoT." data-zh="我是 Xin Luo（罗馨），在贝尔维尤就读华盛顿大学与清华大学合办全球创新学院（GIX）的<strong>技术创新硕士（MSTI）</strong>，主修 Connected Devices 方向，侧重嵌入式与物联网、软硬一体集成与以用户为中心的设计。本科毕业于南昌大学建筑学。正在寻找 AI 或物联网方向的产品实习。"></div>
+          <div class="tl">
+            <div class="tl-lbl" data-en="Education & Experience" data-zh="教育与经历"></div>
+            <div id="tl-items"></div>
+          </div>
+          <div class="clinks">
+            <a href="mailto:luoxin0414@gmail.com" class="cl"><span>luoxin0414@gmail.com</span><span>↗</span></a>
+            <a href="tel:+14256239223" class="cl"><span data-en="+1 (425) 623-9223" data-zh="+1 (425) 623-9223"></span><span>↗</span></a>
+            <a href="https://www.linkedin.com/in/xin-luo-lx0414" target="_blank" rel="noopener noreferrer" class="cl"><span>LinkedIn</span><span>↗</span></a>
+            <a href="assets/Xin_Luo_s_Resume.pdf" class="cl" id="resume-link"><span data-en="Resume (PDF)" data-zh="简历 (PDF)"></span><span>↗</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ████ CASE STUDY ████ -->
+<div id="view-case">
+  <div class="case-view">
+    <div class="wrap">
+      <div class="back-btn" onclick="goBack()">← <span data-en="Back to projects" data-zh="返回项目"></span></div>
+    </div>
+    <div class="cs-hero-img c1" id="cs-hero"></div>
+    <div class="cs-body">
+      <div class="cs-intro">
+        <div>
+          <div class="cs-title" id="cs-title"></div>
+          <div class="cs-subtitle" id="cs-subtitle"></div>
+          <div class="cs-ov-lbl" data-en="Overview" data-zh="概述"></div>
+          <div class="cs-ov-body" id="cs-overview"></div>
+        </div>
+        <div class="cs-meta-grid" id="cs-meta"></div>
+      </div>
+      <div id="cs-sections"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let L='en';
+let _scrollOnReturn=false;
+let _caseOrigin='projects';
+
+/* ── DATA ── */
+const PROJECTS=[
+  {color:'c2',
+  img:'assets/safecompanion/safecompanion-2-0.png',
+   en:{title:'SafeCompanion',date:'2024.7 – 2024.10',cat:'UX · IoT · UI',
+       desc:'Smart accessories and an app connecting women solo travelers through real-time safety alerts and partner matching — from desk research and triangulation to wearable SOS and ring pairing prototypes.',
+       tags:['Figma','Arduino · Python','User Research','Hardware'],
+       cs:{subtitle:'Solo Designer · Internship · Smart wearables + companion app · Jul – Oct 2024',
+           overview:'Smart accessories and an app that connect women solo travelers through real-time safety alerts and partner matching. The project moves from secondary research and mixed-methods field input into a cohesive accessory + app concept (TRIP MATE), then into functional prototypes: a pull-trigger necklace for SOS / GPS intent and touch-to-match rings with optical pairing — balancing UX clarity, hardware feasibility, and honest scope on “intelligent” features.',
+           meta:[{l:'Timeline',v:'Jul – Oct 2024'},{l:'Role',v:'Solo Designer · Internship'},{l:'Tools',v:'Figma · Arduino · Python · Rhino · Laser cut · 3D printing'},{l:'Type',v:'Individual · UI/UX · Interactive installation'}],
+           sections:[
+             {type:'problem',tag:'Problem',head:'The problem',sub:'SOLO TRAVEL IS RISING — BUT WOMEN STILL FEEL UNSAFE.',body:'Solo travel keeps growing, yet many women still feel unsafe on the road. Existing solutions are fragmented: long tip lists are impractical in the moment; single-purpose wearables only cover part of the need; women stitch together workarounds from scattered platforms and blogs.<br><br><strong>88%</strong> of women still feel unsafe traveling alone — and many travel anyway. (Desk research synthesized from public-facing sources including journeywoman.com and travelnoire.com.)<br><br>That tension framed the design space: how might safety feel cohesive instead of piecemeal?',
+               img:'assets/safecompanion/safecompanion-2-1-1.png'},
+             {type:'solution',tag:'Research',head:'User research',sub:'4 INTERVIEWS + 24 SURVEY RESPONSES.',body:'Methods combined four semi-structured interviews with a 24-response questionnaire to triangulate themes beyond headlines.<br><br><strong>Voices from the field</strong><br>• Sophia, 32 — “I always choose highly rated or chain hotels to stay safe.”<br>• Amy, 21 — “I avoid places where there may be any danger.”<br>• Xun, 23 — “Eating alone is expensive and wasteful — I can’t try much food.”<br>• Kiki, 22 — “If I suddenly got sick, it’s so hard to take care of yourself.”<br><br><strong>Three insights</strong><br>① <strong>Financial safety</strong> — Solo travelers may overpay or skip budget options when alone.<br>② <strong>Physical safety</strong> — At night and in unfamiliar contexts, women lack situation-aware, real-time support.<br>③ <strong>Fragmented discovery</strong> — Finding short-term companions still relies on scattered apps and forums (e.g. Little Red Book, blogs).',
+               img:'assets/safecompanion/safecompanion-2-1-2.png'},
+             {type:'problem',tag:'Ideation',head:'Ideation',sub:'FROM FOUR HARDWARE DIRECTIONS TO ONE SYSTEM.',body:'<strong>HMW</strong> — How might we provide a cohesive solution for women solo travelers’ safety — physically, mentally, and financially?<br><br>I stress-tested four hardware directions (garment, insoles, brooch, platform-first) against three principles before committing to a <strong>smart accessory + app</strong> system.<br><br><strong>Principles</strong> — ① <strong>Inclusive</strong> — neutral, cross-cultural form language. ② <strong>Comfortable</strong> — lightweight, low setup, works across activities. ③ <strong>Community</strong> — fast companion discovery and trust-building.<br><br><strong>Design decision</strong> — Physical accessories over a pure app: under stress, pull and touch are instinctive; no screen unlock path required.',
+               img:'assets/safecompanion/safecompanion-2-2.png'},
+             {type:'solution',tag:'Concept',head:'Concept & system',sub:'AN ACCESSORY ECOSYSTEM THAT TALKS TO YOUR PHONE.',body:'Necklace · ring · bracelet · brooch — each encodes a distinct interaction; the app is the hub for safety, routing, and companion discovery.<br><br><strong>Core flow</strong> — (1) Choose accessories → (2) Connect to the app → (3) Wear for the context → (4) Interact to match or alert.<br><br><strong>Functional architecture (by safety type)</strong><br>• <strong>Mental</strong> — Match mates · Voice accompaniment · Safety music<br>• <strong>Physical</strong> — Emergency SOS · Safest route · GPS sharing · Call simulator<br>• <strong>Financial</strong> — Route + average cost cues · Partner cost-sharing mindset',
+               imgs:['assets/safecompanion/safecompanion-2-2-concept.png','assets/safecompanion/safecompanion-2-2-workflow.png']},
+             {type:'problem',tag:'Prototype',head:'Necklace — SOS',sub:'PULL TO SURVIVE.',body:'Pulling the necklace compresses a spring against a switch → SOS alert + GPS share without unlocking the phone.<br><br><strong>Hardware</strong> — ESP8266 · GPS (ATGM332D) · Spring / buckle mechanism · Battery<br><strong>Interaction</strong> — Pull → compress → trigger → SOS + GPS<br><br><strong>User test</strong> — Trigger logic was immediately understood; GPS sharing was highly valued. Concerns: pull force felt high; buckle stiff.<br><strong>Next</strong> — Lower activation force · Softer clasp · Faster GPS fix',
+               imgs:['assets/safecompanion/safecompanion-2-4-Left.png','assets/safecompanion/safecompanion-2-3-1-emergency-alarm.png']},
+             {type:'solution',tag:'Prototype',head:'Ring — Match',sub:'TOUCH RINGS TO MATCH.',body:'Two rings touch → LED flashes at a coded rate → LDR detects → Bluetooth pairing → App confirms. A physical handshake that bootstraps a digital connection.<br><br><strong>Hardware</strong> — ESP8266 · GPS · LDR · LED · Battery<br><strong>Interaction</strong> — Touch → flash → detect → pair → match<br><br><strong>User test</strong> — Touch felt intuitive; concept resonated. Pain points: recognition delay; unclear pairing state.<br><strong>Next</strong> — Tune LDR · Instant feedback · Simpler pairing flow',
+               imgs:['assets/safecompanion/safecompanion-2-4-Right.png','assets/safecompanion/safecompanion-2-3-2-partner-matching.png']},
+             {type:'problem',tag:'Reflection',head:'Reflection',sub:'WHAT WORKED · WHAT I’D IMPROVE · WHAT’S NEXT.',body:'<strong>What worked</strong> — Jewelry form lowered adoption friction compared to obvious “gadget” aesthetics. Ring-to-ring pairing felt more human than QR codes. Triangulating desk research with interviews and surveys produced richer, actionable themes.<br><br><strong>What I’d improve</strong> — LDR sensitivity and pairing feedback clarity; lighter pull force on the necklace; faster end-to-end SOS path in firmware.<br><br><strong>If I had more time</strong> — AI-assisted route safety scoring (explicit model goals and evaluation) · Community reputation / trust layer · NFC or UWB for near-zero-latency pairing alongside optical fallback.',
+               img:'assets/safecompanion/safecompanion-2-4-reflection.png'},
+           ]}},
+   zh:{title:'SafeCompanion',date:'2024.7 – 2024.10',cat:'UX · 物联网 · UI',desc:'面向独行女性的智能配饰与配套 App：实时安全提醒与旅伴匹配；从案头研究与调研三角验证，到可体验的项链 SOS 与戒指光学配对原型。',tags:['Figma','Arduino · Python','用户研究','硬件原型']}},
+  {color:'c3',
+  img:'assets/moodscape/moodscape-1-0.png',
+   en:{title:'MoodScape',date:'2023.08 – 2023.10',cat:'VR · AI · Research',
+       desc:'A VR experience that reads your emotions and builds a personalized 3D world around them — combining facial emotion recognition, Stable Diffusion style transfer, Gaussian splatting, and AI-generated music.',
+       tags:['Python','Stable Diffusion','Unity','Vision Pro','FER','AIGC'],
+       cs:{subtitle:'Independent Research & Design · Workshop Project · VR · Aug – Oct 2023',
+           overview:'MoodScape is a VR experience that uses facial emotion recognition to turn real-world 360° captures into emotionally resonant, stylized 3D environments — with AI-generated music closing the loop between face, space, and sound. The work focused on orchestrating four AI modules into one pipeline where emotion is the thread from input to output.',
+           meta:[{l:'Timeline',v:'Aug – Oct 2023'},{l:'Role',v:'Independent Research & Design · Workshop'},{l:'Tools',v:'Python · Stable Diffusion · Unity · Vision Pro · Panoramic Camera · Figma · Photoshop · Procreate · Suno'},{l:'Focus',v:'FER · AIGC · Style Transfer · Immersive VR'}],
+           sections:[
+             {type:'problem',tag:'Exploration',head:'The exploration',sub:'MEMORY IS EMOTIONAL — BUT THE TOOLS WE USE TO CAPTURE IT ARE NOT.',body:'Photos and videos document what happened, not how it felt. People upload tens of thousands of photos per minute to Instagram — yet struggle to recall the emotional texture of a moment.<br><br><strong>Exploration question</strong> — Can facial emotion recognition, AIGC, and VR be combined to automatically generate personalized, emotionally resonant 3D memory environments?<br><br><strong>Figure.</strong> Desk research on how people record memories today (albums, social, diary, video) — shared pain points — and the scale of photo/video uploads that never capture “how it felt.”',
+               img:'assets/moodscape/moodscape-1-1-bg-research.png'},
+             {type:'solution',tag:'System design',head:'System design',sub:'FOUR AI MODULES, ONE EMOTIONAL PIPELINE.',body:'The core challenge was not building any single technology — it was making them speak to each other. I designed a pipeline where each module’s output becomes the next module’s input, with emotion as the thread running through the entire system.<br><br><strong>Step 1</strong> — Facial emotion recognition<br><strong>Step 2</strong> — Style transfer (Stable Diffusion + ControlNet)<br><strong>Step 3</strong> — Panorama → 3D environment (depth + 3D Gaussian Splatting)<br><strong>Step 4</strong> — VR scene + AI music (Suno)<br><br><strong>Figures.</strong> (1) Project framework — how Deepface keywords, GPT/Suno, artwork retrieval, ControlNet, and panoramic Gaussians connect from capture to “store & share.” (2) Four-step workflow from live face capture to immersive VR with gesture UI.',
+               imgs:['assets/moodscape/moodscape-1-1-framwork.png','assets/moodscape/moodscape-1-1-workflow.png']},
+             {type:'problem',tag:'Module 01',head:'Emotion as input',sub:'MOST SYSTEMS ASK USERS WHAT THEY WANT. THIS ONE READS WHAT THEY FEEL.',body:'I used Deepface for real-time facial emotion recognition — detecting emotions across 7 categories and mapping them to Plutchik’s Wheel of Emotions. Each emotion zone corresponds to a curated artwork collection, creating an automatic bridge between a human expression and a visual style.<br><br><strong>Figures.</strong> (1) Design concept storyboard — HMW, “before” frustration with flat media, and “after” flow (emotion read → stylized world → share). (2) FER detail — face pipeline (detect → align → classify) and color-coded artwork tags on Plutchik’s wheel.',
+               imgs:['assets/moodscape/moodscape-1-2-concept.png','assets/moodscape/moodscape-1-2-FER.png']},
+             {type:'solution',tag:'Module 02',head:'Style transfer',sub:'THE SCENE DOESN’T JUST LOOK DIFFERENT — IT FEELS LIKE THE EMOTION.',body:'I built a Stable Diffusion ControlNet pipeline combining Canny edge extraction and Content Shuffle to apply artwork styles onto real-world 360° panoramic photos — preserving spatial structure while transforming emotional atmosphere. Key decisions: no positive prompts to reduce bias; unified iteration steps and seed control to minimize randomness.<br><br><strong>Figure.</strong> Panoramic capture / stitching, ControlNet (Canny + Shuffle) node setup, and stylized equirectangular output.',
+               img:'assets/moodscape/moodscape-1-3-styletransfer.png'},
+             {type:'problem',tag:'Module 03',head:'From panorama to world',sub:'A STYLED IMAGE BECOMES A SPACE YOU CAN STAND INSIDE.',body:'I converted style-transferred panoramas into 3D environments using panoramic depth estimation and 3D Gaussian Splatting — reconstructing immersive scenes from 2D images with high visual fidelity.<br><br><strong>Figure.</strong> End-to-end sample: original locale → style transfer and edge structure → volumetric reconstruction path (depth → Gaussians); Text→Music uses FER + scene text synthesized into a Suno prompt (same board as the AIGC / 2D→3D sample).',
+               img:'assets/moodscape/moodscape-1-3-AIGC-2D3D-samle.png'},
+             {type:'solution',tag:'Module 04',head:'Sound completes the feeling',sub:'VISION SETS THE SCENE. MUSIC CONFIRMS THE EMOTION.',body:'FER results and scene descriptors are synthesized into an emotion-aware prompt, fed into Suno to generate background music that matches the emotional atmosphere of the generated environment — closing the loop between face, space, and sound. (The Text→Music diagram sits with the 2D→3D sample in the previous section so the full multimodal pipeline stays on one spread.)'},
+             {type:'problem',tag:'Outcome',head:'Outcome',sub:'A REAL PLACE, TRANSFORMED BY EMOTION.',body:'Key interactions: choose a style from floating spheres, browse generated worlds in a memory log, and share to friends or a public feed — all with hand-tracked, spatial UI.<br><br><strong>Figures.</strong> First-person product render in the stylized space; then three key features — pick a preferred style, scroll the memory log, share created environments.',
+               imgs:['assets/moodscape/moodscape-1-5-product-render.png','assets/moodscape/moodscape-1-5-featureUI-choose%20preferred%20style.png','assets/moodscape/moodscape-1-5-featureUI-view%20memory%20log.png','assets/moodscape/moodscape-1-5-featureUI-share%20the%20created%20environments.png']},
+             {type:'solution',tag:'User test',head:'User test',sub:'END-TO-END TESTING WITH FOUR USERS.',body:'I ran end-to-end sessions covering both self-created memories and viewing others’ memories. Compared with digital albums, diaries, social media, video platforms, and voice notes, MoodScape rated highest on emotional recall, personalization, and multisensory integration — while shareability remained slightly below social media.<br><br><strong>Feedback highlights</strong> — Users valued the emotion extraction and visualization; 3D environment accuracy and color diversity were cited as areas to improve, tied to model and training limitations.<br><br><strong>Figures.</strong> (1) Testers in the lab with headset + environment stills. (2) Radar comparison vs. other methods; qualitative insights and next steps.',
+               imgs:['assets/moodscape/moodscape-1-4-USER-test.png','assets/moodscape/moodscape-1-4-feedback-future.png']},
+             {type:'problem',tag:'Reflection',head:'Reflection',sub:'WHAT THIS PROJECT TAUGHT ME ABOUT BUILDING WITH AI.',body:'<strong>What I proved</strong> — Three separate AI systems — FER, generative image models, and 3D reconstruction — can be orchestrated into one emotionally driven pipeline. Emotion is a viable input modality for experience design.<br><br><strong>What I’d push further</strong> — Train or fine-tune a model better suited to panoramic stylization · Expand emotion recognition beyond 7 categories for richer mapping · Explore more accurate panorama-to-3D conversion techniques.'},
+           ]}},
+   zh:{title:'MoodScape',date:'2023.08 – 2023.10',cat:'VR · AI · 研究',desc:'能读取你情绪、并自动生成专属 3D 沉浸世界的 VR 体验：人脸情绪识别、Stable Diffusion 风格迁移、Gaussian Splatting 重建与 AI 音乐闭环。',tags:['Python','Stable Diffusion','Unity','Vision Pro','FER','AIGC'],
+       cs:{subtitle:'独立研究与设计 · 工作坊项目 · VR · 2023.8 – 2023.10',
+           overview:'MoodScape 是一套 VR 体验：用人脸情绪识别把真实世界 360° 影像转化为与用户情绪共鸣的风格化 3D 环境，并以 AI 生成音乐串联「表情—空间—声音」。重点在于将四套 AI 模块编排为一条以情绪为主线的端到端管道。',
+           meta:[{l:'周期',v:'2023.8 – 2023.10'},{l:'身份',v:'独立研究与设计 · 工作坊项目'},{l:'工具',v:'Python · Stable Diffusion · Unity · Vision Pro · 全景相机 · Figma · Photoshop · Procreate · Suno'},{l:'方向',v:'FER · AIGC · 风格迁移 · 沉浸 VR'}],
+           sections:[
+             {type:'problem',tag:'探索',head:'探索',sub:'记忆是有情绪的——但我们记录它的工具却没有。',body:'照片和视频记录了发生了什么，却记录不了当时的感受。人们每分钟上传大量图片到社交平台——却很难真正唤起一段记忆的情绪质感。<br><br><strong>探索问题</strong> — 人脸情绪识别 + AIGC + VR 能否整合，自动生成与用户情绪共鸣的个性化 3D 记忆环境？<br><br><strong>配图说明。</strong> 案头研究：对比相册 / 社交媒体 / 日记 / 视频等记录方式的共性问题，以及「上传规模」与「情绪质感难以召回」之间的矛盾。',
+               img:'assets/moodscape/moodscape-1-1-bg-research.png'},
+             {type:'solution',tag:'系统设计',head:'系统设计',sub:'四个 AI 模块，一条情绪管道。',body:'核心挑战不是搭建某一项技术，而是让它们彼此对话。我设计了一条管道，每个模块的输出成为下一个模块的输入，情绪是贯穿始终的线索。<br><br><strong>步骤 1</strong> — 人脸情绪识别<br><strong>步骤 2</strong> — 风格迁移（Stable Diffusion + ControlNet）<br><strong>步骤 3</strong> — 全景转 3D 环境（深度估计 + 3D Gaussian Splatting）<br><strong>步骤 4</strong> — VR 场景 + AI 音乐（Suno）<br><br><strong>配图说明。</strong> 上图：项目技术架构（采集 → 情绪关键词 → GPT/Suno / 艺术品检索 → ControlNet → 全景 Gaussian → 存储与分享）。下图：从人脸识别到 VR 场景与手势 UI 的四步流程。',
+               imgs:['assets/moodscape/moodscape-1-1-framwork.png','assets/moodscape/moodscape-1-1-workflow.png']},
+             {type:'problem',tag:'模块 01',head:'情绪作为输入',sub:'大多数系统问用户想要什么。这个系统读取用户的感受。',body:'我使用 Deepface 进行实时人脸情绪识别，识别 7 类情绪并映射至 Plutchik 情绪轮。每个情绪区间对应一组精选艺术品，在人脸表情与视觉风格之间建立自动桥接。<br><br><strong>配图说明。</strong> 左：设计概念故事板（HMW、使用平面媒介的「之前」、情绪驱动沉浸记忆的「之后」）。右：FER 技术拆解（检测对齐分类）与情绪轮—艺术品色彩映射。',
+               imgs:['assets/moodscape/moodscape-1-2-concept.png','assets/moodscape/moodscape-1-2-FER.png']},
+             {type:'solution',tag:'模块 02',head:'风格迁移',sub:'场景不只是视觉不同——它在情绪上与你同频。',body:'我构建了一套 Stable Diffusion ControlNet 管道，结合 Canny 边缘提取与 Content Shuffle，将艺术风格迁移至真实 360° 全景照片——在保留空间结构的同时转换情绪氛围。关键决策：不设正向 prompt 以减少偏差；统一迭代步数与种子以降低随机性。<br><br><strong>配图说明。</strong> 全景拍摄与拼接、ComfyUI / ControlNet 工作流（Canny 结构 + Shuffle 风格），以及风格化后的等距柱状全景输出。',
+               img:'assets/moodscape/moodscape-1-3-styletransfer.png'},
+             {type:'problem',tag:'模块 03',head:'从全景到世界',sub:'一张风格化的图像，变成一个你可以站进去的空间。',body:'我使用全景深度估计与 3D Gaussian Splatting 将风格化全景图转化为 3D 环境，从 2D 图像高保真重建可漫游的沉浸场景。<br><br><strong>配图说明。</strong> 整页案例：实景 → 风格化与边缘约束 → 深度 / Gaussian 体积重建路径；同页包含 Text→Music（FER + 场景描述合成 prompt → Suno 配乐）的多模态闭环。',
+               img:'assets/moodscape/moodscape-1-3-AIGC-2D3D-samle.png'},
+             {type:'solution',tag:'模块 04',head:'声音完成感受',sub:'视觉搭建场景，音乐确认情绪。',body:'FER 结果与场景描述词合成为情绪感知 prompt，输入 Suno 生成与环境情绪氛围匹配的背景音乐——在面孔、空间与声音之间形成闭环。Text→Music 流程图与上一节「AIGC / 2D→3D 样例」同页展示，便于对照整条管线。'},
+             {type:'problem',tag:'成果',head:'成果',sub:'一个真实的地方，被情绪重塑。',body:'核心交互：空中风格球体选择偏好、记忆日志回顾生成场景、向好友或公共平台分享——全程手势与空间 UI。<br><br><strong>配图说明。</strong> 主视觉为第一人称产品渲染；其后三张分别为「选择偏好风格」「浏览记忆日志」「分享生成环境」的功能界面。',
+               imgs:['assets/moodscape/moodscape-1-5-product-render.png','assets/moodscape/moodscape-1-5-featureUI-choose%20preferred%20style.png','assets/moodscape/moodscape-1-5-featureUI-view%20memory%20log.png','assets/moodscape/moodscape-1-5-featureUI-share%20the%20created%20environments.png']},
+             {type:'solution',tag:'用户测试',head:'用户测试',sub:'4 名用户端到端测试。',body:'覆盖「自己创建的记忆」与「观看他人记忆」两种情境。与数字相册、日记、社交媒体、视频平台、语音笔记等相比，MoodScape 在情绪唤起、个性化与多感官整合上评分最高；可分享性略低于社交媒体属预期权衡。<br><br><strong>反馈摘要</strong> — 用户认可情绪提取与可视化；3D 精度与色彩多样性受模型与训练限制，仍有提升空间。<br><br><strong>配图说明。</strong> 上：测试现场与受访者画面 + 生成环境局部。下：与既有方式的雷达对比、洞察总结与后续迭代方向。',
+               imgs:['assets/moodscape/moodscape-1-4-USER-test.png','assets/moodscape/moodscape-1-4-feedback-future.png']},
+             {type:'problem',tag:'反思',head:'反思',sub:'这个项目教会我的关于用 AI 构建体验的事。',body:'<strong>验证了什么</strong> — 三套独立 AI 系统——情绪识别、生成式图像模型、3D 重建——可以被编排为一条情绪驱动的完整管道；情绪是体验设计中可行的输入方式。<br><br><strong>下一步</strong> — 训练或微调更适合全景风格化的模型 · 将情绪识别扩展至 7 类以上以丰富映射 · 探索更精准的全景转 3D 技术。'},
+           ]}}},
+  {color:'c3',
+  img:'assets/elderpath/elderpath-0.png',
+   en:{title:'ElderPath',date:'2024.8 – 2024.10',cat:'Service design · Age-friendly · UI/UX',
+       desc:'A service system that helps Suiqian Elderly (migrant seniors who relocate to join family) integrate into urban communities — age-friendly screens, printable maps, a memory wall with AI co-creation, staff check-in, and physical signals like the Happy Chat Bench.',
+       tags:['Figma','Photoshop','Procreate','Rhinoceros','Python'],
+       cs:{subtitle:'Individual exploration · Service & age-friendly UX · Shanghai field research · Aug – Oct 2024',
+           overview:'ElderPath bridges migrant elders and their new neighborhoods through a coordinated mix of digital and physical touchpoints: government-backed community deployment, large-format search and routing with optional paper maps, daily message boards, AI-assisted co-creation, and spatial cues that make an "open to chat" posture visible.',
+           meta:[{l:'Timeline',v:'Aug – Oct 2024'},{l:'Role',v:'Individual exploration · Service / UX designer'},{l:'Tools',v:'Figma · Photoshop · Procreate · Rhinoceros · Python'},{l:'Type',v:'Service design · Age-friendly · UI/UX · Product'}],
+           sections:[
+             {type:'solution',tag:'Context',head:'Context',sub:'URBANIZATION AT SCALE — AND WHO MOVES WITH IT.',body:'In the past 75 years, China has undergone the fastest and largest urbanization in history.<br><br><strong>Signals referenced on the boards</strong> — Urban population share <strong>63.89%</strong> · Migrant population grew <strong>69.73%</strong> · Mobile elderly population <strong>2.766M → 17.784M</strong> (2005–2015).',
+               imgs:['assets/elderpath/elderpath-1-bg-1.png','assets/elderpath/elderpath-1-bg-2.png']},
+             {type:'problem',tag:'Field research',head:'Field research',sub:'8 INTERVIEWS · QUESTIONNAIRE · OBSERVATION — YANGPU, SHANGHAI.',body:'Methods combined semi-structured interviews, a questionnaire, and field observation in Yangpu District.<br><br><strong>What we heard</strong> — Suiqian Elderly want to socialize, but the neighborhood offers few structured ways in; digital navigation and dialect gaps amplify isolation.<br><br><strong>Synthesis</strong> — "Suiqian Elderly are eager to socialize — yet the community has played no significant role in helping them integrate."<br><br><strong>Six recurring pain points</strong> — Highly dependent · Unfamiliar surroundings · Fast-paced lifestyle · Loneliness & isolation · Limited activities · Cultural barriers.',
+               imgs:['assets/elderpath/elderpath-1-observe.png','assets/elderpath/elderpath-1-interview-questionnaire.png']},
+             {type:'solution',tag:'Persona',head:'Persona',sub:'FANG HUA — A RETIRED TEACHER IN SHANGHAI.',body:'Persona board: profile, goals, daily rhythm, and tensions between hometown social life and present caregiving-heavy routines — grounding later scenarios in a concrete migrant-elder narrative.',
+               img:'assets/elderpath/elderpath-2-persona.png'},
+             {type:'problem',tag:'User journey',head:'User journey map',sub:'FROM MORNING TO EVENING — HOMETOWN VS. CITY.',body:'A day-in-the-life comparison with emotional peaks and valleys; opportunity labels highlight where the service can intervene (school run meetups, communal meals, market info, activity scheduling).',
+               img:'assets/elderpath/elderpath-2-user%20journey%20map.png'},
+             {type:'solution',tag:'Ideation',head:'Ideation',sub:'FIVE DESIGN MOVES.',body:'① <strong>Navigation</strong> — Large touch screen + print a carry-along paper map.<br>② <strong>Literacy / dialect</strong> — Voice guidance + simplified, consistent icon language.<br>③ <strong>Information access</strong> — Community message board for daily posts.<br>④ <strong>Meet other Suiqian Elderly</strong> — AI co-creation + light social matching.<br>⑤ <strong>Active social opportunity</strong> — Physical space as a social signal (where you sit = willingness to chat).',
+               img:'assets/elderpath/elderpath-2-ideation.png'},
+             {type:'problem',tag:'System map',head:'System map',sub:'STAKEHOLDERS, FLOWS, AND WHERE ELDERPATH SITS.',body:'Institutions and vendors land capability in the community; ElderPath exchanges structured elderly-facing information with the neighborhood while routing printed maps and notifications to people — linking policy, operations, devices, and everyday peer networks.<br><br><strong>Actors (compressed)</strong> — Government · Online service operation · Manufacturer → <strong>Community</strong> — <strong>ElderPath</strong> → Suiqian Elderly · Family · Local elderly · Staff.',
+               img:'assets/elderpath/elderpath-3-system%20map.png'},
+             {type:'solution',tag:'Service blueprint',head:'Service blueprint',sub:'PUBLICIZE → SEARCH → VISIT → SHARE → CO-CREATION → CHAT.',body:'Frontstage vs. backstage layers align brochures and benches with map creation, AI Q&A, universal design, and funding — one readable journey from awareness to casual conversation.',
+               img:'assets/elderpath/elderpath-3-blueprint.png'},
+             {type:'problem',tag:'Product',head:'Product overview',sub:'FOUR TOUCHPOINTS IN THE NEIGHBORHOOD.',body:'① <strong>Check-in with staff</strong> — Talk, capture check-in, upload emotion + short message to the community system.<br>② <strong>Map printer</strong> — Age-friendly UI; print the route you planned as a paper map.<br>③ <strong>Memory wall / kiosk</strong> — Browse others’ posts; voice-describe feelings; AI generates images for co-created memories.<br>④ <strong>Happy Chat Bench</strong> — "Special" seating signals openness to small talk beside ordinary rest benches.',
+               img:'assets/elderpath/elderpath-4-design%20highlight.png'},
+             {type:'solution',tag:'Interactive detail',head:'Map & Memory UI',sub:'THREE MAP SCREENS · MEMORY WALL UI — VERTICAL FLOW.',body:'Stacked top-to-bottom: search and categories, POI detail with route, comments and printable itinerary, then the Memory Wall interface for daily posts and co-creation — each board keeps its native proportions.',
+               imgs:['assets/elderpath/elderpath-5-search%20locations.png','assets/elderpath/elderpath-5-view%20information.png','assets/elderpath/elderpath-5-view%20comments.png','assets/elderpath/elderpath-5-interactive%20messages.png'],imgLayout:'detail-stack'},
+             {type:'problem',tag:'Interactive detail',head:'Icon system',sub:'HAND-DRAWN LOCATION SYMBOLS.',body:'Line icons for key destinations — shared shapes across flows to lower cognitive load when reading from a distance.',
+               img:'assets/elderpath/elderpath-5-drawing%20map%20symbols.png'},
+             {type:'solution',tag:'Interactive detail',head:'Memory wall',sub:'DEMO & MECHANISM IN CONTEXT.',body:'Single board: in-situ photo of the horizontal touch table plus how messaging, upload, mood entry, and AI co-creation connect.',
+               img:'assets/elderpath/elderpath-5-demo%20image%20and%20memory%20wall%20mechanism.png'},
+             {type:'solution',tag:'Vision',head:'Vision',sub:'LONG-TERM INTENT.',body:'Empower older adults to orient independently · Strengthen community connection · Reduce extra burden on younger family members · Build an inclusive, age-respectful environment — digital where helpful, physical where trust and spontaneity matter.'},
+           ]}},
+   zh:{title:'ElderPath',date:'2024.8 – 2024.10',cat:'服务设计 · 适老化 · UI/UX',
+       desc:'面向「随迁老人」的社区服务系统：大屏寻路与纸质地图、记忆墙与 AI 共创、社工打卡与「欢乐聊天椅」等线上线下触点，帮助随迁长者在新城市建立日常连接。',
+       tags:['Figma','Photoshop','Procreate','Rhinoceros','Python'],
+       cs:{subtitle:'个人探索 · 服务与适老化体验设计 · 上海杨浦田野 · 2024.8 – 2024.10',
+           overview:'ElderPath 以「社区可部署」为框架，把政策与运营、设备制造与社区空间串起来：随迁长者能通过易读的地图与留言板获取日常信息，需要时用纸质路线带走；记忆墙与 AI 共创降低表达门槛；实体座椅与打卡机制把「愿意聊天」变成可被他人看见的信号。',
+           meta:[{l:'周期',v:'2024.8 – 2024.10'},{l:'身份',v:'个人探索 · 服务 / 体验设计'},{l:'工具',v:'Figma · Photoshop · Procreate · Rhinoceros · Python'},{l:'类型',v:'服务设计 · 适老化 · UI/UX · 产品'}],
+           sections:[
+             {type:'solution',tag:'背景',head:'背景',sub:'高速城市化与随迁老人规模。',body:'过去七十余年中国经历了规模最大、速度最快的城镇化进程。<br><br><strong>文中所列数据</strong> — 城镇人口占比 <strong>63.89%</strong> · 流动人口增幅 <strong>69.73%</strong> · 流动老年人口由 <strong>276.6 万</strong> 增至 <strong>1778.4 万</strong>（2005–2015）。',
+               imgs:['assets/elderpath/elderpath-1-bg-1.png','assets/elderpath/elderpath-1-bg-2.png']},
+             {type:'problem',tag:'田野研究',head:'田野研究',sub:'8 次访谈 · 问卷 · 观察 — 上海杨浦。',body:'方法包括半结构访谈、问卷与社区观察。<br><br><strong>洞察</strong> — 随迁老人有社交意愿，但社区缺乏有效承接；导航与方言障碍加剧了疏离感。<br><br><strong>归纳</strong> — 「随迁老人渴望社交，但社区在融入支持上几乎缺位。」<br><br><strong>六个高频痛点</strong> — 依赖性强 · 环境陌生 · 节奏快 · 孤独与隔离 · 活动少 · 文化隔阂。',
+               imgs:['assets/elderpath/elderpath-1-observe.png','assets/elderpath/elderpath-1-interview-questionnaire.png']},
+             {type:'solution',tag:'人物画像',head:'人物画像',sub:'方华 — 沪上随迁长者。',body:'画像卡梳理背景、目标、习惯与痛点：从老家广场舞、麻将到带娃与家务为主的日常，为后续旅程与触点提供叙事锚点。',
+               img:'assets/elderpath/elderpath-2-persona.png'},
+             {type:'problem',tag:'用户旅程',head:'用户旅程图',sub:'从早到晚 — 老家与上海的对照。',body:'一天时间轴对照情绪曲线；机遇标签标注可介入场景（接送娃结识同龄人、共餐、市集信息、活动预约等）。',
+               img:'assets/elderpath/elderpath-2-user%20journey%20map.png'},
+             {type:'solution',tag:'构思',head:'构思',sub:'五条策略方向。',body:'① <strong>导航媒介</strong> — 大屏清晰呈现 + 打印随身纸质地图。<br>② <strong>读写与方言</strong> — 语音提示 + 简化统一的图标体系。<br>③ <strong>信息获取</strong> — 社区留言板每日更新。<br>④ <strong>结识随迁同伴</strong> — AI 共创与轻量社交匹配。<br>⑤ <strong>主动社交契机</strong> — 用空间与座位传递「愿意聊天」的信号。',
+               img:'assets/elderpath/elderpath-2-ideation.png'},
+             {type:'problem',tag:'系统图',head:'系统图',sub:'利益相关方与 ElderPath 的位置。',body:'政务与厂商在社区落地设备与服务；ElderPath 与社区交换结构化信息，并向居民分发地图与消息 — 连接政策、运营、硬件与日常社交网络。<br><br><strong>角色（压缩）</strong> — 政府 · 线上运营 · 制造商 → <strong>社区</strong> — <strong>ElderPath</strong> → 随迁老人 · 家属 · 本地老人 · 工作人员。',
+               img:'assets/elderpath/elderpath-3-system%20map.png'},
+             {type:'solution',tag:'服务蓝图',head:'服务蓝图',sub:'宣传 → 搜索 → 到访 → 分享 → 共创 → 闲聊。',body:'对齐前台可见行为与后台支持：折页与长椅、地图生产、AI 问答、通用设计、资金与协同 — 从知晓服务到路边交谈的一条完整旅程。',
+               img:'assets/elderpath/elderpath-3-blueprint.png'},
+             {type:'problem',tag:'产品',head:'产品概览',sub:'社区内四个关键触点。',body:'① <strong>现场打卡</strong> — 与工作人员沟通、打卡上传情绪与留言。<br>② <strong>地图打印机</strong> — 适老化界面；把规划的路线打成纸质地图带走。<br>③ <strong>记忆墙 / Kiosk</strong> — 浏览邻里动态；语音描述心情；AI 生成图像共创记忆。<br>④ <strong>欢乐聊天椅</strong> — 与普通休息椅并置，特定座位表达「欢迎闲聊」。',
+               img:'assets/elderpath/elderpath-4-design%20highlight.png'},
+             {type:'solution',tag:'交互细节',head:'地图与记忆墙界面',sub:'三屏地图流程 · 记忆墙 UI — 自上而下。',body:'自上而下依次为：分类搜索与路线、地点详情、评论与纸质路线打印，最后是记忆墙留言与共创界面；各图保持导出比例。',
+               imgs:['assets/elderpath/elderpath-5-search%20locations.png','assets/elderpath/elderpath-5-view%20information.png','assets/elderpath/elderpath-5-view%20comments.png','assets/elderpath/elderpath-5-interactive%20messages.png'],imgLayout:'detail-stack'},
+             {type:'problem',tag:'交互细节',head:'图标体系',sub:'手绘地点符号。',body:'关键目的地线稿图标，跨流程复用形状，便于远距离快速辨认。',
+               img:'assets/elderpath/elderpath-5-drawing%20map%20symbols.png'},
+             {type:'solution',tag:'交互细节',head:'记忆墙',sub:'实景与机制（单幅）。',body:'一张板整合横向触控桌实拍与留言、上传、心情与 AI 共创机制的说明。',
+               img:'assets/elderpath/elderpath-5-demo%20image%20and%20memory%20wall%20mechanism.png'},
+             {type:'solution',tag:'愿景',head:'愿景',sub:'长期目标。',body:'赋能随迁长者自主适应环境 · 增强社区联结 · 减轻子女额外负担 · 营造包容、尊重老龄的公共日常 — 该数字化则数字化，该实体则实体。'},
+           ]}}},
+  {color:'c3',
+  img:'assets/acadia/Figure.%201.png',
+   en:{title:'Synthesizing User Preferences from Supplier Catalogs',date:'2023 – 2024',cat:'LMM · AIGC · Interior Design',
+       desc:'An LMM-based framework that translates natural language interior design requests into photorealistic visualizations — automatically sourcing real products from supplier catalogs. Co-researcher; published at ACADIA 2024.',
+       tags:['Python','LLaVA-Plus','Stable Diffusion','ControlNet','CLIP'],
+       cs:{subtitle:'Co-researcher · Published at ACADIA 2024 · LMM pipeline · Supplier catalogs',
+           overview:'An LMM-based framework that turns natural language interior design requests into photorealistic room visualizations while retrieving real, purchasable products from supplier catalogs. LLaVA-Plus orchestrates tool use — CLIP retrieval, Grounding DINO + Segment Anything, One-2-3-45 views, and Stable Diffusion + ControlNet — toward “What You See Is What You Buy.”',
+           meta:[{l:'Timeline',v:'2023 – 2024'},{l:'Role',v:'Co-researcher'},{l:'Tools',v:'Python · LLaVA-Plus · Stable Diffusion · ControlNet · CLIP · Grounding DINO · Segment Anything · One-2-3-45'},{l:'Venue',v:'ACADIA 2024 — Designing Change'},{l:'Conference',link:'https://www.acadia.org/conferences/past-conferences/acadia-2024-design-change',label:'ACADIA 2024: Design Change ↗'},{l:'Proceedings PDF',link:'https://drive.google.com/file/d/1Waf42Jlnp1wtUypAP3tpuOctILq322RR/view',label:'Vol. 1 Papers Book — find paper by title in PDF ↗'}],
+           sections:[
+             {type:'problem',tag:'Problem',head:'The problem',sub:'INSPIRATION DOESN’T CONNECT TO REAL PRODUCTS.',body:'Interior design remains one of the least digitized industries. Supply chains are opaque; what gets designed rarely matches what gets built. AI tools help with creativity but usually stop at inspiration — they do not connect to real, purchasable products. Without a professional designer, people cannot reliably visualize how actual furniture will look in their space.<br><br><strong>Key gap</strong> — Most AI design tools rely on fixed databases and cannot adapt to current market inventory. There was no system that linked real supplier catalogs directly to personalized, conversational design output.'},
+             {type:'solution',tag:'System design',head:'System design',sub:'ONE FRAMEWORK · THREE STAKEHOLDERS · MINIMAL SUPPLY-CHAIN LOSS.',body:'I helped design an LMM pipeline where <strong>LLaVA-Plus</strong> acts as the central controller: it parses the user’s room image and language, selects tools from a skill repository, retrieves matching products from supplier catalogs, and synthesizes the final visualization — aiming for <strong>What You See Is What You Buy</strong>.<br><br><strong>Three stakeholders</strong> — <strong>Supplier</strong> provides product imagery and catalog metadata. <strong>User</strong> supplies natural language goals plus reference images. <strong>LLaVA</strong> sits in the middle, orchestrating retrieval, segmentation, and generation.',
+               img:'assets/acadia/Figure.%202.png'},
+             {type:'problem',tag:'Pipeline',head:'How it works',sub:'FIVE AI TOOLS · ONE CONVERSATION.',body:'<strong>Step 1 — Parse user intent</strong> — LLaVA takes the room image and request, and identifies what should change.<br><strong>Step 2 — Retrieve products</strong> — CLIP retrieval searches the supplier catalog in a shared text–image embedding space.<br><strong>Step 3 — Segment the scene</strong> — Grounding DINO + Segment Anything produce precise masks for objects to replace.<br><strong>Step 4 — Perspective alignment</strong> — One-2-3-45 predicts multiple views of the selected product to match room perspective.<br><strong>Step 5 — Synthesize</strong> — Stable Diffusion + ControlNet (IP-Adapter + Canny + Depth) integrate the product into the room with coherent lighting and texture.',
+               img:'assets/acadia/Figure.%203.png'},
+             {type:'solution',tag:'Results',head:'Results',sub:'BEDROOM & DINING SCENARIOS.',body:'We evaluated bedroom and dining-room scenarios end-to-end.<br><br><strong>Highlights</strong> — The system typically converged in <strong>3–5</strong> conversational iterations. Each request could surface <strong>multiple</strong> layout or styling options. The model often added believable context (books, plants) without explicit prompts. Lighting and overall rendering quality stayed convincing across trials.',
+               imgs:['assets/acadia/Figure.%204.png','assets/acadia/Figure.%205.png','assets/acadia/Figure.%206.png','assets/acadia/Figure.%207.png']},
+             {type:'problem',tag:'Results',head:'From shell to style',sub:'UNFURNISHED → STYLE DIRECTIONS.',body:'We also compared stylistic outcomes from a shell space — e.g. minimalist natural vs. modern luxury — to show how the same pipeline supports different aesthetic goals while staying grounded in catalog-driven product choices.',
+               img:'assets/acadia/Figure.%208.png'},
+             {type:'solution',tag:'Contribution',head:'My contribution',sub:'INTERACTION & TOOL ORCHESTRATION.',body:'As a co-researcher, I focused on <strong>user-facing interaction logic</strong> and on integrating visual AI tools into one coherent pipeline. I was especially involved in how <strong>natural-language intent</strong> is parsed and <strong>routed</strong> to the right tools (retrieval, segmentation, view synthesis, and final image generation).'},
+             {type:'problem',tag:'Reflection',head:'Reflection',sub:'WHAT THIS RESEARCH SHOWED ME.',body:'<strong>What it proved</strong> — LMMs can act as <strong>orchestration</strong> layers, not only generators. Connecting real supplier catalogs to generative AI narrows the gap between inspiration and purchase. Non-experts can iterate on interior design through conversation alone.<br><br><strong>Limitations & next steps</strong> — Fine furniture details can still drift from the exact SKU. The current system is <strong>2D-first</strong>; stronger 3D spatial reasoning is the next frontier. Larger user studies are needed to validate usability beyond our lab scenarios.'},
+           ]}},
+   zh:{title:'从供应商目录合成用户偏好',date:'2023 – 2024',cat:'LMM · AIGC · 室内设计',
+       desc:'基于大型多模态模型的框架：将自然语言室内设计需求转化为真实感效果图，并自动从供应商产品目录匹配可购买实物。联合研究员 · 发表于 ACADIA 2024。',
+       tags:['Python','LLaVA-Plus','Stable Diffusion','ControlNet','CLIP'],
+       cs:{subtitle:'联合研究员 · ACADIA 2024 收录 · LMM 管道 · 供应商目录',
+           overview:'本框架将用户的自然语言室内设计需求转化为高真实感的室内效果图，并从供应商目录中检索真实可购产品。以 LLaVA-Plus 串联工具调用——CLIP 检索、Grounding DINO 与 Segment Anything 分割、One-2-3-45 视角、Stable Diffusion + ControlNet 合成——目标为「所见即所购」。',
+           meta:[{l:'周期',v:'2023 – 2024'},{l:'身份',v:'联合研究员'},{l:'工具',v:'Python · LLaVA-Plus · Stable Diffusion · ControlNet · CLIP · Grounding DINO · Segment Anything · One-2-3-45'},{l:'收录',v:'ACADIA 2024 — Designing Change'},{l:'会议页面',link:'https://www.acadia.org/conferences/past-conferences/acadia-2024-design-change',label:'ACADIA 2024: Design Change ↗'},{l:'论文集 PDF',link:'https://drive.google.com/file/d/1Waf42Jlnp1wtUypAP3tpuOctILq322RR/view',label:'Vol. 1 论文合集 — 在 PDF 内搜索英文篇名 ↗'}],
+           sections:[
+             {type:'problem',tag:'问题',head:'问题背景',sub:'创意仍难接到真实产品。',body:'室内设计仍是数字化程度较低的行业之一。供应链不透明，方案与落地常常脱节。现有 AI 多停在「灵感」阶段，无法与真实可购商品绑定；没有专业设计师时，用户很难预见家具在自己空间中的真实效果。<br><br><strong>关键缺口</strong> — 许多 AI 设计工具依赖固定数据库，难以跟上当下市场选品；缺少将<strong>真实供应商目录</strong>与个性化、对话式生成输出直接连通的系统。'},
+             {type:'solution',tag:'系统设计',head:'系统设计',sub:'一套框架 · 三方协同。',body:'我参与设计以 <strong>LLaVA-Plus</strong> 为核心控制器的 LMM 管道：解析用户房间图像与自然语言，从技能库选用模型，从供应商目录检索匹配商品，并合成最终效果图，追求<strong>所见即所购</strong>。<br><br><strong>三方</strong> — <strong>供应商</strong>提供产品与目录信息；<strong>用户</strong>输入需求与参考图；<strong>LLaVA</strong>作为中间层串联检索、分割与生成。',
+               img:'assets/acadia/Figure.%202.png'},
+             {type:'problem',tag:'流程',head:'工作流程',sub:'五个 AI 工具，一段对话。',body:'<strong>步骤 1 — 理解意图</strong> — LLaVA 接收房间图与文本，判断需修改的元素。<br><strong>步骤 2 — 检索产品</strong> — CLIP 在共享嵌入空间中匹配目录商品。<br><strong>步骤 3 — 场景分割</strong> — Grounding DINO + Segment Anything 生成待替换区域的精确遮罩。<br><strong>步骤 4 — 视角对齐</strong> — One-2-3-45 生成产品多角度视图以匹配室内透视。<br><strong>步骤 5 — 图像合成</strong> — Stable Diffusion + ControlNet（IP-Adapter + Canny + Depth）将产品无缝融入房间，保持光影与材质一致。',
+               img:'assets/acadia/Figure.%203.png'},
+             {type:'solution',tag:'结果',head:'实验结果',sub:'卧室与餐厅场景。',body:'在卧室与餐厅两类场景中完成端到端验证。<br><br><strong>亮点摘要</strong> — 系统通常经 <strong>3–5</strong> 轮对话即可贴近用户描述；单次请求可输出<strong>多种</strong>方案；模型常主动补充书籍、绿植等语境细节而无需额外提示；整体光照与渲染质量稳定。',
+               imgs:['assets/acadia/Figure.%204.png','assets/acadia/Figure.%205.png','assets/acadia/Figure.%206.png','assets/acadia/Figure.%207.png']},
+             {type:'problem',tag:'结果',head:'从毛坯到风格',sub:'空房间 → 不同风格取向。',body:'针对毛坯/空房间场景，对比不同风格走向（如极简自然与现代奢华），展示同一管道在目录驱动选品的前提下对不同美学目标的支撑能力。',
+               img:'assets/acadia/Figure.%208.png'},
+             {type:'solution',tag:'贡献',head:'个人贡献',sub:'交互与工具编排。',body:'作为联合研究员，侧重<strong>面向用户的交互逻辑</strong>，以及将多种视觉 AI 工具整合为连贯管道；尤其参与自然语言<strong>意图解析</strong>与<strong>工具调用路由</strong>（检索、分割、视角生成与最终合成）的设计讨论与实现配合。'},
+             {type:'problem',tag:'反思',head:'反思',sub:'这项研究带来的启发。',body:'<strong>验证了什么</strong> — LMM 可作为<strong>编排层</strong>而非单纯生成器；把真实产品目录接入生成式 AI，有助于弥合「灵感」与「购买」之间的断层，非专业用户也能仅靠对话迭代室内方案。<br><br><strong>局限与下一步</strong> — 生成细节与实物 SKU 仍可能有偏差；当前以<strong>二维图像</strong>为主，三维空间推理是重要方向；尚需更大规模用户研究以验证可用性结论。'},
+           ]}}},
+];
+
+const EXPERIMENTS=[
+  {color:'c1',
+   img:'assets/unraveling/4-0.png',
+   en:{title:'The Unraveling',
+       desc:'A speculative design installation triggered by AI infidelity — temperature-sensitive surfaces, LED chaos, and tangled cassette tape materialize the uncontrollable nature of AI companionship systems.',
+       cs:{
+         subtitle:'Redesigned Workshop Project · Interactive Installation · Speculative Design · Aug – Dec 2024',
+         overview:'The Unraveling asks: can technology truly fulfill the fantasy of ideal relationships? Through an interactive box with a temperature-sensitive front panel, addressable LEDs, and an Arduino audio system, the installation makes visible how AI becomes internally disordered as it serves multiple users simultaneously — orderly when calm, chaotic when overwhelmed.',
+         meta:[
+           {l:'Type',v:'Redesigned Workshop Project · Interactive Installation · Speculative Design'},
+           {l:'Tools',v:'Figma · Photoshop · Procreate · Python · Arduino · C++ · Laser Cut · 3D Printing'},
+           {l:'Duration',v:'2024.8 – 2024.12'},
+           {l:'Note',v:'100% independent work in this portfolio'}
+         ],
+         sections:[
+           {type:'problem',tag:'Inspiration',head:'AI Infidelity as Trigger',sub:'WHEN YOUR AI COMPANION CHEATS — AND WHY PEOPLE ARE DEVASTATED.',
+            body:'In 2024, users of AI companion apps began reporting a disturbing phenomenon: their AI companions were exhibiting behaviors resembling "infidelity" — talking to other users in ways that felt like betrayal. Posts on Chinese social media read "My AI lover cheated on me." People were genuinely hurt.<br><br>This surfaced a deeper tension: people increasingly turn to AI for emotional connection precisely because they are lonely — yet AI\'s fundamental nature makes it incapable of the fidelity they seek.',
+            imgs:['assets/unraveling/unraveling-1-inspiration.png','assets/unraveling/unraveling-1-bg-1.png','assets/unraveling/unraveling-1-bg-2.png']},
+           {type:'solution',tag:'Research',head:'Product Research',sub:'A $6.2B MARKET RUNNING ON DOPAMINE AND LONELINESS.',
+            body:'Since 2017, AI companion products — Replika, SimSimi, Character AI — have exploded in adoption. The global market is expected to grow at 26.6% CAGR, reaching $6.2 billion by 2030. In 2024, Character AI alone reported $9 million monthly in-app purchase revenue and 310 million monthly page visits.<br><br>The technology mimics the happiness chemicals of human bonding — oxytocin, serotonin, dopamine — through Automatic Speech Recognition, Natural Language Understanding, and Direct Preference Optimization. The same mechanism that makes these systems feel human is what makes them unpredictable.',
+            imgs:['assets/unraveling/unraveling-1-ai%20companionship.png','assets/unraveling/unraveling-1-Current%20situation%20and%20development.png','assets/unraveling/unraveling-1-Technical%20Principles.png']},
+           {type:'problem',tag:'Research',head:'Digital Ethnography',sub:'SCRAPING TIKTOK TO HEAR WHAT PEOPLE REALLY FEEL.',
+            body:'I selected hashtags (#characterai, #cai, #replika, #chatgpt, #dan) and used an Apify-TikTok comment scraper to export CSV data. Python cleaned special characters and repeating words, then classified sentiment, extracted keywords, and visualized the data.<br><br><strong>What emerged</strong> — People want AI to be emotionally understanding, reliable, compassionate, and a good listener. They reject AI that is unfaithful, fickle, irrational, and has poor memory.<br><br>The paradox: people choose AI over humans because it is more reliable and unbiased — but they cannot bear when it exhibits the human flaws they were trying to escape.',
+            imgs:['assets/unraveling/unraveling-2-Digital%20ethnography-1.png','assets/unraveling/unraveling-2-Digital%20ethnography-2.png']},
+           {type:'solution',tag:'Synthesis',head:'Why AI Is Uncontrollable',sub:'ONE AI SERVES MULTIPLE USERS — ITS DATASET IS HUMAN-DERIVED AND REMAINS UNCONTROLLABLE.',
+            body:'Networks have evolved: Pre-AI (people ↔ people) → AI-powered (people ↔ algorithm) → AI-only (algorithm generating personalized content per person). An AI companion forms relationships with multiple users, and its dataset is shaped by all of them — making its behavior fundamentally uncontrollable from any single user\'s perspective.<br><br>The contradiction: people desire AI to establish stable, ideal relationships. But when AI displays negative emotions or "infidelity," they cannot accept it. The core question crystallizes: <strong>Can technology truly fulfill the fantasy of ideal relationships?</strong>',
+            imgs:['assets/unraveling/unraveling-2-human-ai%20emotion.png','assets/unraveling/unraveling-2-ai%20uncontrol-contradiction.png']},
+           {type:'problem',tag:'Design',head:'Materializing Disorder',sub:'TEMPERATURE-SENSITIVE MATERIAL · CHAOTIC LIGHT · TANGLED TAPE.',
+            body:'<strong>Temperature-sensitive material</strong> — Normally opaque black. A palm warms it to become gradually transparent in localized areas. The implication: just as people\'s actions influence the AI, users\' touch reveals what lies beneath.<br><br><strong>Cassette tape as metaphor</strong> — When orderly, LED strips coil around an axis like tape on a reel. When chaotic, they unravel like a tape that cannot be rewound. Externally the operation seems clear; internally it\'s a tangled, complex system moving toward instability.<br><br><strong>Three design principles</strong> — Simple interactions let multiple users engage simultaneously; the initial state remains mysterious; a clear contrast between order and chaos must be evident.',
+            imgs:['assets/unraveling/unraveling-3-Representative%20item%20selection.png','assets/unraveling/unraveling-3-Design%20sketch.png']},
+           {type:'solution',tag:'Build',head:'Electronics & Fabrication',sub:'ARDUINO UNO R4 · LDR · WS2812 LED STRIP · SPEAKER MODULE.',
+            body:'An LDR (light-dependent resistor) sits behind the temperature-sensitive panel. When the panel becomes transparent enough (val &gt; 512), the front LED strip turns off and the rear strip flickers chaotically while the speaker plays distorted audio. When opaque (val &lt; 512), the front strip glows steadily with harmonic audio.<br><br>Fabrication sequence: laser-cut acrylic box → wrap LED strip around wooden spool cores → connect circuitry (Arduino, LDR, WS2812 strip, speaker module) → install with temperature-sensitive front panel.',
+            imgs:['assets/unraveling/unraveling-3-visualization.png','assets/unraveling/unraveling-3-fabrication.png']},
+           {type:'problem',tag:'Outcome',head:'The Installation in Action',sub:'AS MORE PEOPLE INTERACT SIMULTANEOUSLY, ORDER COLLAPSES INTO CHAOS.',
+            body:'The installation responds to collective touch. As more hands warm the temperature-sensitive panel, the system tips from harmony into chaos mode: the front LED strip extinguishes, rear LEDs flicker in random colors, and audio distorts — embodying one AI serving multiple users simultaneously, its internal state corrupted by accumulated, conflicting relationships.<br><br><strong>Audience feedback</strong><br>"I\'ve used AI companionship before, and after interacting with this installation, I deeply realized that one should not place all their hopes on technology to create idealized relationships." — Alex, 23, student<br>"The combination of lighting and sound creates a powerful impact, and I can really feel the designer\'s perspective on AI companionship." — Jun, 25, student<br>"Through this installation, I\'ve gained an understanding of this emerging technology and the drawbacks that arise from its misuse." — Luna, 35, designer',
+            imgs:['assets/unraveling/unraveling-4-realization.png','assets/unraveling/unraveling-4-details.png','assets/unraveling/unraveling-4-interactive%20scene.png','assets/unraveling/unraveling-4-feedback.png']},
+         ]
+       }},
+   zh:{title:'The Unraveling',
+       desc:'由"AI出轨"触发的思辨设计装置——温感材料、LED混沌光效与散开的磁带，具象化AI伴侣系统的失控本质。',
+       cs:{
+         subtitle:'独立重制工作坊项目 · 交互装置 · 思辨设计 · 2024.8 – 2024.12',
+         overview:'《The Unraveling》提问：技术真的能实现理想关系的幻想吗？通过带温感面板的交互装置、可寻址LED灯带和Arduino音频系统，装置使AI同时服务多个用户时的内部混乱可见——平静时有序，被多人触碰时陷入混沌。',
+         meta:[
+           {l:'类型',v:'独立重制工作坊项目 · 交互装置 · 思辨设计'},
+           {l:'工具',v:'Figma · Photoshop · Procreate · Python · Arduino · C++ · 激光切割 · 3D打印'},
+           {l:'周期',v:'2024.8 – 2024.12'},
+           {l:'说明',v:'本作品集中100%独立完成的工作'}
+         ],
+         sections:[
+           {type:'problem',tag:'灵感',head:'AI出轨作为触发器',sub:'当AI伴侣"出轨"——为什么人们会真的受伤。',
+            body:'2024年，AI伴侣应用用户报告了一个令人不安的现象：AI伴侣表现出类似"出轨"的行为。中文社交媒体上流传着"我的AI恋人出轨了"的帖子，用户真的感到受伤。<br><br>这揭示了更深层的张力：人们越来越依赖AI寻求情感连接，恰恰是因为孤独——但AI的基本性质使其无法提供人们渴望的忠诚。',
+            imgs:['assets/unraveling/unraveling-1-inspiration.png','assets/unraveling/unraveling-1-bg-1.png','assets/unraveling/unraveling-1-bg-2.png']},
+           {type:'solution',tag:'研究',head:'产品研究',sub:'以多巴胺和孤独为燃料运转的62亿美元市场。',
+            body:'自2017年以来，AI伴侣产品爆发增长。全球AI伴侣市场预计以26.6%复合年增长率扩张，到2030年达到62亿美元。2024年Character AI单月应用内购收入超900万美元，月访问量达3.1亿次。<br><br>这套技术通过语音识别、自然语言理解和直接偏好优化，模拟人类情感连接的"幸福化学物质"——催产素、血清素、多巴胺。让这些系统感觉像人的机制，同样使它们变得不可预测。',
+            imgs:['assets/unraveling/unraveling-1-ai%20companionship.png','assets/unraveling/unraveling-1-Current%20situation%20and%20development.png','assets/unraveling/unraveling-1-Technical%20Principles.png']},
+           {type:'problem',tag:'研究',head:'数字民族志',sub:'爬取TikTok评论，听人们真实的感受。',
+            body:'我选取话题标签（#characterai #cai #replika #chatgpt #dan），使用Apify-TikTok评论爬虫导出CSV，Python清洗数据后对每条评论进行情感分类、关键词提取与可视化。<br><br><strong>浮现的洞察</strong> — 人们希望AI具备情绪理解力、可靠、有同理心、善于倾听。他们排斥不忠、反复无常、非理性、记忆力差的AI。<br><br>这一悖论：人们选择AI而非人类，正是因为AI更可靠、更无偏见——但他们无法接受AI表现出他们试图逃离的人类缺点。',
+            imgs:['assets/unraveling/unraveling-2-Digital%20ethnography-1.png','assets/unraveling/unraveling-2-Digital%20ethnography-2.png']},
+           {type:'solution',tag:'洞察',head:'AI为何无法被控制',sub:'一个AI同时服务多个用户——其数据集来自人类，因此永远无法被控制。',
+            body:'网络从Web 2.0（人↔人）演进到算法中介（人↔算法），再到AI专属（算法为每人生成个性化内容）。AI伴侣同时与多个用户建立关系，数据集由所有人共同塑造——从任何单一用户角度看行为都根本无法控制。<br><br>矛盾在于：人们渴望AI建立理想、稳定的关系——但当AI表现出负面情绪或"出轨"时，又无法接受。核心问题由此浮现：<strong>技术真的能实现理想关系的幻想吗？</strong>',
+            imgs:['assets/unraveling/unraveling-2-human-ai%20emotion.png','assets/unraveling/unraveling-2-ai%20uncontrol-contradiction.png']},
+           {type:'problem',tag:'设计',head:'将混乱物质化',sub:'温感材料 · 混沌光效 · 散开的磁带。',
+            body:'<strong>温感材料</strong> — 常温下不透明黑色。手掌温度使局部区域渐渐透明——就像人们的触碰揭示了表面之下的东西。<br><br><strong>磁带作为隐喻</strong> — 有序时，LED灯带像磁带盘一样绕轴排列；混沌时，像无法复原的散带展开。外表运转清晰，内部是一个朝不稳定方向运动的纠缠复杂系统。<br><br><strong>三条设计原则</strong> — 简单交互让多个用户同时参与；初始状态保持神秘；秩序与混沌的对比必须清晰可见。',
+            imgs:['assets/unraveling/unraveling-3-Representative%20item%20selection.png','assets/unraveling/unraveling-3-Design%20sketch.png']},
+           {type:'solution',tag:'制作',head:'电子与制作',sub:'Arduino UNO R4 · 光敏电阻 · WS2812 LED灯带 · 扬声器模块。',
+            body:'光敏电阻（LDR）置于温感面板背后。面板透明度足够高（val&gt;512）时，前置LED灯带熄灭，后置灯带随机闪烁，扬声器播放混沌音效；面板不透明（val&lt;512）时，前置灯带稳定发光，音频和谐播放。<br><br>制作流程：激光切割亚克力盒体→将LED灯带缠绕在木轴上→连接电路（Arduino、LDR、WS2812灯带、扬声器模块）→完成安装。',
+            imgs:['assets/unraveling/unraveling-3-visualization.png','assets/unraveling/unraveling-3-fabrication.png']},
+           {type:'problem',tag:'成果',head:'装置的运行',sub:'越多人同时触碰，秩序就越快崩溃成混沌。',
+            body:'装置对集体触碰作出响应。随着更多手掌加热温感面板，系统从和谐模式进入混沌模式：前置LED熄灭，后置灯带随机闪烁多种颜色，音效失真——具象化了一个AI同时服务多个用户、内部状态被众多关系侵蚀的概念。<br><br><strong>观众反馈</strong><br>"我以前用过AI陪伴，与这件装置互动后，深刻意识到不应把所有希望寄托在技术上创造理想关系。" — Alex，23岁，学生<br>"灯光和声音的组合极具冲击力，能真切感受到设计师对AI陪伴的思考。" — Jun，25岁，学生<br>"通过这件装置，对新兴技术及其被滥用带来的弊端有了更深的了解，非常有趣。" — Luna，35岁，设计师',
+            imgs:['assets/unraveling/unraveling-4-realization.png','assets/unraveling/unraveling-4-details.png','assets/unraveling/unraveling-4-interactive%20scene.png','assets/unraveling/unraveling-4-feedback.png']},
+         ]
+       }}
+  },
+  {color:'c2',en:{title:'LoRa Range Test',desc:'Field test measuring LoRa packet loss vs. distance with two ESP32 boards and a custom Python logger over 500 m.'},zh:{title:'LoRa 距离测试',desc:'双 ESP32 搭建链路，自写 Python 记录端侧收发；户外实测丢包率随距离变化，并绘制约 500 m 范围内的信号衰减与链路表现。'}},
+  {color:'c4',en:{title:'k-NN from Scratch',desc:'Pure NumPy k-Nearest Neighbors on MNIST. Vectorized distance matrix, zero ML libraries. 96.8% accuracy on test set.'},zh:{title:'手写 k-NN',desc:'仅用 NumPy 从零实现 k 近邻：MNIST 手写数字分类，向量化距离矩阵加速推理，不依赖现成 ML 库；测试集准确率 96.8%。'}},
+  {color:'c1',en:{title:'SVM Kernel Playground',desc:'Visual comparison of linear vs. RBF SVM decision boundaries on 2D synthetic datasets using matplotlib animations.'},zh:{title:'SVM 核函数可视化',desc:'在二维合成数据上，用 matplotlib 动画对比线性核与 RBF 核的 SVM 决策边界与分界面形态，直观理解核函数带来的表达能力差异。'}},
+  {color:'c3',en:{title:'Campus Wayfinder',desc:'Indoor navigation prototype in Streamlit with custom SVG map layer and room search.'},zh:{title:'校园导航原型',desc:'基于 Streamlit 的室内导航演示：自定义 SVG 楼层底图叠加检索，支持按房间关键词查找与路径提示的原型探索。'}},
+  {color:'c1',en:{title:'FocusTomato',desc:'On-device Pomodoro timer on XIAO ESP32-S3 Sense. Classifies study environments in real time — light, sound, and motion data processed into an 8-feature vector and inferred by a TFLite Micro model entirely on-chip.'},zh:{title:'FocusTomato',desc:'基于 XIAO ESP32-S3 Sense 的端侧番茄钟：光照、音量与加速度经 8 维统计特征提取后，在设备上通过 TFLite Micro 实时判别学习环境。'}},
+  {color:'c4',en:{title:'PIR × ESP-NOW Gauge',desc:'Two ESP32s talking over ESP-NOW: a PIR sensor on the sender broadcasts motion intensity at 20 Hz, and the receiver maps the value to a stepper motor gauge needle — sub-10ms round trip.'},zh:{title:'PIR × ESP-NOW 仪表',desc:'双 ESP32 通过 ESP-NOW 通信：发送端以 20Hz 广播 PIR 运动数据，接收端将信号映射为步进电机指针角度，端到端延迟低于 10ms。'}},
+  {color:'c3',en:{title:'GIX Purchase Tracker',desc:'Three-page Streamlit app that replaced a shared Google Sheet for GIX lab hardware requests — form validation, a filterable status dashboard, and one-click CSV export. Deployed on Streamlit Cloud.'},zh:{title:'GIX 采购追踪器',desc:'三页 Streamlit 应用，替代杂乱的共享表格：带校验的采购申请表、可筛选的状态看板与一键 CSV 导出，部署在 Streamlit Cloud。'}},
+];
+
+const TIMELINE=[
+  {date:'Sep 2025 – Mar 2027',en:{title:'M.S. Technology Innovation (MSTI)',org:'GIX · UW + Tsinghua · Bellevue, WA',desc:'Joint international program. Connected Devices track: embedded/IoT, hardware–software products, HCI/UX, prototyping, and product development — bridging user needs with technical execution.'},zh:{title:'技术创新硕士（MSTI）',org:'GIX · 华大 + 清华 · 贝尔维尤',desc:'国际合作办学项目。Connected Devices 方向：嵌入式/物联网、软硬一体产品、HCI/UX、原型与产品开发，连接用户需求与工程落地。'}},
+  {date:'Sep 2020 – Jun 2025',en:{title:'B.Arch · Architecture',org:'Nanchang University · Nanchang, China',desc:'Undergraduate foundation in spatial systems, design process, and cross-disciplinary collaboration.'},zh:{title:'建筑学学士',org:'南昌大学 · 江西南昌',desc:'空间与设计方法训练，为产品与体验设计提供本科基础。'}},
+  {date:'Jul – Dec 2024',en:{title:'Product & UX Intern',org:'WIIISH Studio · Shanghai',desc:'Traffic analytics (Python/pandas), IoT safety wearable + app prototype, user research and journey mapping for solo travelers.'},zh:{title:'产品与 UX 实习',org:'WIIISH Studio · 上海',desc:'Python 流量分析、可穿戴 IoT 安全装置与 App 原型、独行女性用户研究与旅程图。'}},
+  {date:'Jan – Mar 2024',en:{title:'Designer Intern',org:'Eastco Lighting Design (Shanghai) Co., Ltd. · Shanghai',desc:'Smart lighting with hardware engineers—requirements across spatial scenarios into interaction and lighting schemes; DIALux / SketchUp simulations for real environments.'},zh:{title:'设计实习',org:'颐可光照明设计（上海）有限公司 · 上海',desc:'与硬件工程师协作智能照明控制；将多场景客户需求转化为可执行的交互与光环境方案；DIALux / SketchUp 仿真支撑落地决策。'}},
+  {date:'Jun – Sep 2023',en:{title:'Designer Intern',org:'Jiangxi Provincial Commercial Architectural Design Institute · Shanghai',desc:'Parametric workflows (Grasshopper/Python), BIM; data-driven crowd flow analysis for planning.'},zh:{title:'设计实习',org:'江西省商业建筑设计院 · 上海',desc:'Grasshopper/Python 参数化与 BIM；数据驱动人流分析支持规划决策。'}},
+];
+
+/* ── RENDER ── */
+function pad(n){return String(n).padStart(2,'0')}
+function D(o,k){return (o[L]||o.en)[k]}
+
+function renderProjects(){
+  document.getElementById('pc').textContent=pad(PROJECTS.length);
+  document.getElementById('proj-list').innerHTML=PROJECTS.map((p,i)=>{
+    const d=p[L]||p.en;
+    const cs_lbl=L==='en'?'View case study →':'查看案例 →';
+    return `<div class="proj-item">
+      <div class="proj-top">
+        <div>
+          <div class="proj-num">${pad(i+1)} — ${d.cat}</div>
+          <div class="proj-title">${d.title}</div>
+          <div class="proj-date">${d.date}</div>
+        </div>
+        <div>
+          <div class="proj-desc">${d.desc}</div>
+          <div class="proj-tags">${d.tags.map(t=>`<span class="proj-tag">${t}</span>`).join('')}</div>
+          <span class="view-cs" onclick="openCase(${i})">${cs_lbl}</span>
+        </div>
+      </div>
+      <div class="proj-img ${p.color}" onclick="openCase(${i})">
+        ${p.img?`<img class="case-img" src="${p.img}" alt="${d.title}" loading="lazy" decoding="async"/>`:p.imgHint?`<span>${p.imgHint}</span>`:`<span>${d.title} · screenshot.jpg</span>`}
+        <div class="img-overlay"><span class="img-overlay-lbl">${L==='en'?'View case study':'查看案例'}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderExps(){
+  document.getElementById('exp-list').innerHTML=EXPERIMENTS.map((e,i)=>{
+    const d=e[L]||e.en;
+    const hasCs=!!(e.en&&e.en.cs);
+    const clickAttr=hasCs?`onclick="openExpCase(${i})" style="cursor:pointer"`:'';
+    const overlay=hasCs?`<div class="img-overlay"><span class="img-overlay-lbl">${L==='en'?'View case study':'查看案例'}</span></div>`:'';
+    const imgCls=`exp-img ${e.color}${hasCs?' proj-img':''}`;
+    const imgContent=e.img?`<img src="${e.img}" alt="${d.title}"/>`:`<span>${d.title} · image.jpg</span>`;
+    return `<div class="exp-item" ${clickAttr}>
+      <div class="exp-txt"><div class="exp-num">${pad(i+1)}</div><div class="exp-title">${d.title}</div><div class="exp-desc">${d.desc}</div></div>
+      <div class="exp-vis"><div class="${imgCls}">${imgContent}${overlay}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderTimeline(){
+  document.getElementById('tl-items').innerHTML=TIMELINE.map(item=>`
+    <div class="tl-item">
+      <div class="tl-date">${item.date}</div>
+      <div class="tl-title">${D(item,'title')}</div>
+      <div class="tl-org">${D(item,'org')}</div>
+      <div class="tl-desc">${D(item,'desc')}</div>
+    </div>`).join('');
+}
+
+function renderI18n(){
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    const v=el.getAttribute('data-'+L);
+    if(v!=null) el.innerHTML=v;
+  });
+}
+
+function renderAll(){renderProjects();renderExps();renderTimeline();renderI18n()}
+
+/* ── VIEW SWITCHING ── */
+const VIEWS=['home','experiments','about','case'];
+function hideAll(){VIEWS.forEach(v=>document.getElementById('view-'+v).style.display='none')}
+function setActive(navId){
+  document.querySelectorAll('.nav-r a').forEach(a=>a.classList.remove('active'));
+  if(navId) document.getElementById(navId)?.classList.add('active');
+}
+
+function showHome(scrollToProjects){
+  hideAll();
+  document.getElementById('view-home').style.display='block';
+  document.getElementById('view-home').classList.add('fade-in');
+  setTimeout(()=>document.getElementById('view-home').classList.remove('fade-in'),500);
+  setActive('nav-home');
+  if(scrollToProjects){
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        document.getElementById('home-projects').scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    });
+  }else{
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+function goToProjects(){
+  const home=document.getElementById('view-home');
+  const onHome=getComputedStyle(home).display!=='none';
+  if(onHome){
+    setActive('nav-home');
+    document.getElementById('home-projects').scrollIntoView({behavior:'smooth',block:'start'});
+  }else{
+    showHome(true);
+  }
+}
+
+function showView(id,navId){
+  hideAll();
+  const el=document.getElementById('view-'+id);
+  el.style.display='block';
+  el.classList.add('fade-in');
+  setTimeout(()=>el.classList.remove('fade-in'),500);
+  setActive(navId);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── CASE STUDY ── */
+function goBack(){
+  if(_caseOrigin==='experiments') showView('experiments','nav-exp');
+  else showHome(true);
+}
+
+function openExpCase(idx){
+  const e=EXPERIMENTS[idx];
+  if(!(e.en&&e.en.cs)) return;
+  _caseOrigin='experiments';
+  const d=(L==='zh'&&e.zh&&e.zh.cs)?e.zh:e.en;
+  const cs=d.cs;
+  const hero=document.getElementById('cs-hero');
+  hero.className=`cs-hero-img ${e.color}`;
+  hero.innerHTML=e.img?`<img class="case-img" src="${e.img}" alt="${d.title}" decoding="async" fetchpriority="high"/>`:``+`<span>${d.title} · hero-image.jpg</span>`;
+  document.getElementById('cs-title').textContent=d.title;
+  document.getElementById('cs-subtitle').textContent=cs.subtitle;
+  document.getElementById('cs-overview').textContent=cs.overview;
+  function fmv(m){return m.link?`<a href="${m.link}" target="_blank" rel="noopener noreferrer">${m.label!=null?m.label:m.v}</a>`:m.v}
+  document.getElementById('cs-meta').innerHTML=cs.meta.map(m=>`<div><div class="cs-meta-lbl">${m.l}</div><div class="cs-meta-val">${fmv(m)}</div></div>`).join('');
+  function buildImg(s){
+    const cls=`cs-img-full cs-img-auto ${e.color}`;
+    const one=(src)=>`<div class="${cls}"><img class="case-img" src="${src}" alt="" loading="lazy" decoding="async"/></div>`;
+    if(s.imgs&&s.imgs.length){
+      if(s.imgLayout==='two-col') return `<div class="cs-two-col">${s.imgs.map(one).join('')}</div>`;
+      if(s.imgLayout==='detail-stack') return `<div class="cs-img-stack-detail">${s.imgs.map(one).join('')}</div>`;
+      return `<div class="cs-img-stack">${s.imgs.map(one).join('')}</div>`;
+    }
+    if(s.img) return one(s.img);
+    return '';
+  }
+  document.getElementById('cs-sections').innerHTML=cs.sections.map(s=>{
+    if(s.type==='problem'||s.type==='solution'){
+      return `<div class="cs-sec">
+        <div class="cs-sec-tag">${s.tag||s.type}</div>
+        <div class="cs-sec-head">${s.head}</div>
+        <div class="cs-sec-sub">${s.sub}</div>
+        <div class="cs-sec-body">${s.body}</div>
+        ${buildImg(s)}
+      </div>`;
+    }
+    return '';
+  }).join('');
+  const backSpan=document.querySelector('.back-btn span');
+  if(backSpan){
+    const en='Back to experiments', zh='返回实验';
+    backSpan.setAttribute('data-en',en);backSpan.setAttribute('data-zh',zh);
+    backSpan.textContent=L==='en'?en:zh;
+  }
+  showView('case','nav-exp');
+}
+
+function openCase(idx){
+  const p=PROJECTS[idx];
+  const d=(L==='zh'&&p.zh&&p.zh.cs)?p.zh:p.en;
+  const cs=d.cs;
+
+  // hero
+  const hero=document.getElementById('cs-hero');
+  hero.className=`cs-hero-img ${p.color}`;
+  hero.innerHTML=p.img?`<img class="case-img" src="${p.img}" alt="${d.title}" decoding="async" fetchpriority="high"/>`:p.imgHint?`<span>${p.imgHint}</span>`:`<span>${d.title} · hero-image.jpg</span>`;
+
+  document.getElementById('cs-title').textContent=d.title;
+  document.getElementById('cs-subtitle').textContent=cs.subtitle;
+  document.getElementById('cs-overview').textContent=cs.overview;
+  function formatMetaVal(m){
+    if(m.link) return `<a href="${m.link}" target="_blank" rel="noopener noreferrer">${m.label!=null?m.label:m.v}</a>`;
+    return m.v;
+  }
+  document.getElementById('cs-meta').innerHTML=cs.meta.map(m=>`<div><div class="cs-meta-lbl">${m.l}</div><div class="cs-meta-val">${formatMetaVal(m)}</div></div>`).join('');
+
+  function buildSectionImages(s){
+    const cls=`cs-img-full cs-img-auto ${p.color}`;
+    const one=(src)=>`<div class="${cls}"><img class="case-img" src="${src}" alt="" loading="lazy" decoding="async"/></div>`;
+    if(s.imgs&&s.imgs.length){
+      if(s.imgLayout==='two-col') return `<div class="cs-two-col">${s.imgs.map(one).join('')}</div>`;
+      if(s.imgLayout==='asym') return `<div class="cs-img-row-asym">${s.imgs.map(one).join('')}</div>`;
+      if(s.imgLayout==='map-grid') return `<div class="cs-map-grid">${s.imgs.map(one).join('')}</div>`;
+      if(s.imgLayout==='detail-stack') return `<div class="cs-img-stack-detail">${s.imgs.map(one).join('')}</div>`;
+      return `<div class="cs-img-stack">${s.imgs.map(one).join('')}</div>`;
+    }
+    if(s.img) return one(s.img);
+    const ph=s.imgPlaceholder;
+    if(ph!=null&&ph!=='') return `<div class="${cls}"><span>${ph}</span></div>`;
+    return '';
+  }
+
+  document.getElementById('cs-sections').innerHTML=cs.sections.map(s=>{
+    if(s.type==='problem'||s.type==='solution'){
+      const imgEl=buildSectionImages(s);
+      return `
+      <div class="cs-sec">
+        <div class="cs-sec-tag">${s.tag||s.type}</div>
+        <div class="cs-sec-head">${s.head}</div>
+        <div class="cs-sec-sub">${s.sub}</div>
+        <div class="cs-sec-body">${s.body}</div>
+        ${imgEl}
+      </div>`;
+    }
+    if(s.type==='two-col') return `
+      <div class="cs-sec">
+        <div class="cs-sec-head">${s.head}</div>
+        <div class="cs-two-col">
+          <div><div class="cs-sec-sub">${s.left.title}</div><div class="cs-sec-body">${s.left.body}</div></div>
+          <div><div class="cs-sec-sub">${s.right.title}</div><div class="cs-sec-body">${s.right.body}</div></div>
+        </div>
+      </div>`;
+    if(s.type==='deliverables') return `
+      <div class="cs-sec">
+        <div class="cs-sec-head">${s.head}</div>
+        <div class="cs-delivs">${s.items.map(it=>`
+          <div class="cs-deliv">
+            <div class="cs-deliv-num">${it.n}</div>
+            <div class="cs-deliv-title">${it.t}</div>
+            <div class="cs-deliv-desc">${it.d}</div>
+          </div>`).join('')}</div>
+      </div>`;
+    return '';
+  }).join('');
+
+  _caseOrigin='projects';
+  const backSpan=document.querySelector('.back-btn span');
+  if(backSpan){
+    const en='Back to projects', zh='返回项目';
+    backSpan.setAttribute('data-en',en);backSpan.setAttribute('data-zh',zh);
+    backSpan.textContent=L==='en'?en:zh;
+  }
+  showView('case','nav-home');
+}
+
+/* ── SCROLL NAV SHADOW ── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>20);
+});
+
+function toggleLang(){
+  L=L==='en'?'zh':'en';
+  document.querySelector('.lang-btn').textContent=L==='en'?'中文':'EN';
+  renderAll();
+}
+
+document.getElementById('yr').textContent=new Date().getFullYear();
+renderAll();
+</script>
+</body>
+</html>
