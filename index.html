@@ -661,7 +661,64 @@ const EXPERIMENTS=[
   {color:'c1',en:{title:'SVM Kernel Playground',desc:'Visual comparison of linear vs. RBF SVM decision boundaries on 2D synthetic datasets using matplotlib animations.'},zh:{title:'SVM 核函数可视化',desc:'在二维合成数据上，用 matplotlib 动画对比线性核与 RBF 核的 SVM 决策边界与分界面形态，直观理解核函数带来的表达能力差异。'}},
   {color:'c3',en:{title:'Campus Wayfinder',desc:'Indoor navigation prototype in Streamlit with custom SVG map layer and room search.'},zh:{title:'校园导航原型',desc:'基于 Streamlit 的室内导航演示：自定义 SVG 楼层底图叠加检索，支持按房间关键词查找与路径提示的原型探索。'}},
   {color:'c1',en:{title:'FocusTomato',desc:'On-device Pomodoro timer on XIAO ESP32-S3 Sense. Classifies study environments in real time — light, sound, and motion data processed into an 8-feature vector and inferred by a TFLite Micro model entirely on-chip.'},zh:{title:'FocusTomato',desc:'基于 XIAO ESP32-S3 Sense 的端侧番茄钟：光照、音量与加速度经 8 维统计特征提取后，在设备上通过 TFLite Micro 实时判别学习环境。'}},
-  {color:'c4',en:{title:'PIR × ESP-NOW Gauge',desc:'Two ESP32s talking over ESP-NOW: a PIR sensor on the sender broadcasts motion intensity at 20 Hz, and the receiver maps the value to a stepper motor gauge needle — sub-10ms round trip.'},zh:{title:'PIR × ESP-NOW 仪表',desc:'双 ESP32 通过 ESP-NOW 通信：发送端以 20Hz 广播 PIR 运动数据，接收端将信号映射为步进电机指针角度，端到端延迟低于 10ms。'}},
+  {color:'c4',
+   img:'assets/catfeeding/catfeeding-0.webp',
+   en:{
+     title:'Cat Feeding Activity Monitor',
+     desc:'Connected IoT system monitoring cat visits to a food bowl — PIR sensor + ESP-NOW wireless link + X27 stepper gauge, housed in 3D-printed yellow PLA enclosures. 90% detection accuracy in testing.',
+     cs:{
+       subtitle:'TECHIN 514 Final Project · Connected Devices · Embedded IoT · Mar 2026',
+       overview:'Cat owners often don\'t know when their food bowl is empty. This system monitors how frequently a cat approaches its bowl using a PIR motion sensor near the feeding area. Detected events are debounced and transmitted wirelessly over ESP-NOW to a display device that visualizes activity with a physical X27 stepper gauge — frequent visits signal it\'s time to refill.',
+       meta:[
+         {l:'Type',v:'Academic Project · TECHIN 514 · Connected Devices'},
+         {l:'Tools',v:'ESP32-S3 · ESP32-C3 · HC-SR501 PIR · ESP-NOW · X27 Stepper Motor · KiCad · 3D Printing'},
+         {l:'Duration',v:'2026.1 – 2026.3'},
+         {l:'GitHub',v:'TECHIN514_project',link:'https://github.com/Xin-414/TECHIN514_project.git'}
+       ],
+       sections:[
+         {type:'problem',tag:'Problem',head:'Cats Visiting an Empty Bowl',sub:'OWNERS DON\'T KNOW — CATS KEEP TRYING.',
+          body:'Cat owners often cannot tell when their cat\'s food bowl needs refilling. Cats may visit an empty bowl repeatedly, but owners are not aware — leading to inconsistent feeding schedules or a hungry cat going unnoticed.',
+          imgs:['assets/catfeeding/catfeeding-1-problem.webp']},
+         {type:'solution',tag:'System',head:'Two-Device Connected Architecture',sub:'SENSING → ESP-NOW → PHYSICAL GAUGE.',
+          body:'The system pairs two ESP32 devices over <strong>ESP-NOW</strong> (sub-10 ms latency).<br><br><strong>Sensing Device (ESP32-S3 + HC-SR501)</strong> — A PIR motion sensor detects cat movement near the food bowl. A debounce time window filters repeated triggers from a single visit so only valid events are counted, then broadcast wirelessly.<br><br><strong>Display Device (ESP32-C3 + X27 Motor)</strong> — Receives visit counts and maps them to a stepper motor gauge needle angle. An LED provides additional status feedback; a push button resets the counter. Powered by a 3.7V 500 mAh LiPo for ~20 days of typical use.',
+          imgs:['assets/catfeeding/catfeeding-2-architecture.webp']},
+         {type:'problem',tag:'Hardware',head:'Custom PCB & 3D-Printed Enclosures',sub:'KICAD PCB · YELLOW PLA · BREADBOARD DISPLAY.',
+          body:'The sensing device uses a custom KiCad PCB hosting the Seeed XIAO ESP32-S3, decoupling capacitors (4.7 µF + 0.1 µF SMD), and a 510 Ω indicator LED — all in a compact yellow PLA enclosure sized to sit beside a cat bowl.<br><br>The display device is assembled on a breadboard with the XIAO ESP32-C3, X27.168 bipolar stepper motor, 330 Ω LED resistor, and an SPDT reset button — in a matching yellow enclosure with a circular gauge face.',
+          imgs:['assets/catfeeding/catfeeding-3-devices.webp']},
+         {type:'solution',tag:'Results',head:'Signal Processing & Performance',sub:'90% DETECTION ACCURACY · ~20-DAY BATTERY LIFE.',
+          body:'Signal pipeline: <strong>PIR Signal → Debounce Threshold → Valid Motion Event → Activity Counter → Gauge Angle Mapping → Refill Reminder</strong>.<br><br>In testing, the system detected <strong>18 out of 20</strong> simulated bowl visits — an estimated detection accuracy of <strong>90%</strong>. Battery analysis shows ~<strong>19.8 days</strong> of typical use on a 500 mAh cell, with ESP-NOW radio transmission being the most power-sensitive phase.',
+          imgs:['assets/catfeeding/catfeeding-4-signal.webp']},
+       ]
+     }
+   },
+   zh:{
+     title:'猫咪喂食活动监测器',
+     desc:'物联网连接设备系统——PIR传感器经ESP-NOW无线传输运动数据，驱动X27步进仪表针可视化猫咪访碗频率。黄色PLA 3D打印外壳，测试检测准确率90%。',
+     cs:{
+       subtitle:'TECHIN 514 期末项目 · Connected Devices · 嵌入式物联网 · 2026年3月',
+       overview:'猫主人往往不知道食碗何时已空，猫咪反复访碗却无人察觉。本系统通过放置于喂食区的PIR运动传感器监测访碗频率，经防抖处理后通过ESP-NOW无线传输至显示设备，由X27步进仪表针实时可视化——访碗频繁即提示需要补充食物。',
+       meta:[
+         {l:'类型',v:'学术项目 · TECHIN 514 · Connected Devices'},
+         {l:'工具',v:'ESP32-S3 · ESP32-C3 · HC-SR501 PIR · ESP-NOW · X27步进电机 · KiCad · 3D打印'},
+         {l:'周期',v:'2026.1 – 2026.3'},
+         {l:'GitHub',v:'TECHIN514_project',link:'https://github.com/Xin-414/TECHIN514_project.git'}
+       ],
+       sections:[
+         {type:'problem',tag:'问题',head:'猫咪守着空碗，主人却不知道',sub:'猫咪不停访碗，主人无从察觉。',
+          body:'猫主人常常无法得知猫咪食碗何时已空。猫咪可能反复造访空碗，但主人对此毫无感知——导致喂食不规律或猫咪长时间挨饿。',
+          imgs:['assets/catfeeding/catfeeding-1-problem.webp']},
+         {type:'solution',tag:'系统架构',head:'双设备无线连接架构',sub:'感知 → ESP-NOW → 物理仪表。',
+          body:'系统由两个通过 <strong>ESP-NOW</strong>（延迟低于10ms）通信的ESP32设备组成。<br><br><strong>感知设备（ESP32-S3 + HC-SR501）</strong> — PIR传感器检测猫咪在食碗附近的运动，防抖时间窗过滤单次访碗产生的重复触发，仅统计有效运动事件后无线传输。<br><br><strong>显示设备（ESP32-C3 + X27电机）</strong> — 接收访碗次数并映射为步进电机仪表针角度，LED提供状态反馈，按钮重置计数。3.7V 500mAh锂电池供电，预计续航约20天。',
+          imgs:['assets/catfeeding/catfeeding-2-architecture.webp']},
+         {type:'problem',tag:'硬件',head:'定制PCB与3D打印外壳',sub:'KiCad PCB · 黄色PLA · 面包板显示端。',
+          body:'感知设备采用定制KiCad PCB，搭载Seeed XIAO ESP32-S3、去耦电容（4.7µF + 0.1µF SMD）和510Ω指示LED，封装在可放置于猫碗旁的紧凑黄色PLA外壳中。<br><br>显示设备在面包板上组装，包含XIAO ESP32-C3、X27.168双极步进电机、330Ω限流电阻和SPDT重置按钮，外壳设计与感知端保持统一黄色造型，正面为圆形仪表盘。',
+          imgs:['assets/catfeeding/catfeeding-3-devices.webp']},
+         {type:'solution',tag:'成果',head:'信号处理与性能表现',sub:'检测准确率90% · 电池续航约20天。',
+          body:'信号处理流程：<strong>PIR运动信号 → 防抖阈值 → 有效运动事件 → 活动计数器 → 仪表角度映射 → 补食提醒</strong>。<br><br>测试中系统在20次模拟访碗中检测到<strong>18次</strong>，估算检测准确率<strong>90%</strong>。电池分析显示500mAh电池在典型使用场景下续航约<strong>19.8天</strong>，功耗最敏感环节为ESP-NOW无线传输时的射频模块。',
+          imgs:['assets/catfeeding/catfeeding-4-signal.webp']},
+       ]
+     }
+   }},
   {color:'c3',en:{title:'GIX Purchase Tracker',desc:'Three-page Streamlit app that replaced a shared Google Sheet for GIX lab hardware requests — form validation, a filterable status dashboard, and one-click CSV export. Deployed on Streamlit Cloud.'},zh:{title:'GIX 采购追踪器',desc:'三页 Streamlit 应用，替代杂乱的共享表格：带校验的采购申请表、可筛选的状态看板与一键 CSV 导出，部署在 Streamlit Cloud。'}},
 ];
 
