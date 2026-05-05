@@ -234,6 +234,16 @@ nav.scrolled{box-shadow:0 1px 24px rgba(0,0,0,.07)}
 .cs-deliv-title{font-size:.88rem;font-weight:600;margin-bottom:4px}
 .cs-deliv-desc{font-size:.76rem;color:var(--muted);line-height:1.55}
 
+/* ══ VIDEO MODAL ══ */
+.vmodal{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.vmodal.open{opacity:1;pointer-events:all}
+.vmodal-inner{width:100%;max-width:960px;aspect-ratio:16/9;position:relative;border-radius:1.25rem;overflow:hidden;background:#000;box-shadow:0 40px 80px rgba(0,0,0,.6)}
+.vmodal-close{position:absolute;top:-34px;right:0;color:rgba(255,255,255,.65);font-size:.76rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:color .2s}
+.vmodal-close:hover{color:#fff}
+.vmodal iframe{width:100%;height:100%;border:none}
+.cs-video{margin-top:26px;width:100%;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.cs-video iframe{width:100%;height:100%;border:none}
+
 /* ══ FOOTER ══ */
 footer{border-top:1px solid var(--border);padding:22px 0}
 .footer-inner{max-width:var(--max);margin:0 auto;padding:0 var(--px);display:flex;justify-content:space-between;align-items:center}
@@ -656,13 +666,9 @@ const EXPERIMENTS=[
          ]
        }}
   },
-  {color:'c2',en:{title:'LoRa Range Test',desc:'Field test measuring LoRa packet loss vs. distance with two ESP32 boards and a custom Python logger over 500 m.'},zh:{title:'LoRa 距离测试',desc:'双 ESP32 搭建链路，自写 Python 记录端侧收发；户外实测丢包率随距离变化，并绘制约 500 m 范围内的信号衰减与链路表现。'}},
-  {color:'c4',en:{title:'k-NN from Scratch',desc:'Pure NumPy k-Nearest Neighbors on MNIST. Vectorized distance matrix, zero ML libraries. 96.8% accuracy on test set.'},zh:{title:'手写 k-NN',desc:'仅用 NumPy 从零实现 k 近邻：MNIST 手写数字分类，向量化距离矩阵加速推理，不依赖现成 ML 库；测试集准确率 96.8%。'}},
-  {color:'c1',en:{title:'SVM Kernel Playground',desc:'Visual comparison of linear vs. RBF SVM decision boundaries on 2D synthetic datasets using matplotlib animations.'},zh:{title:'SVM 核函数可视化',desc:'在二维合成数据上，用 matplotlib 动画对比线性核与 RBF 核的 SVM 决策边界与分界面形态，直观理解核函数带来的表达能力差异。'}},
-  {color:'c3',en:{title:'Campus Wayfinder',desc:'Indoor navigation prototype in Streamlit with custom SVG map layer and room search.'},zh:{title:'校园导航原型',desc:'基于 Streamlit 的室内导航演示：自定义 SVG 楼层底图叠加检索，支持按房间关键词查找与路径提示的原型探索。'}},
-  {color:'c1',en:{title:'FocusTomato',desc:'On-device Pomodoro timer on XIAO ESP32-S3 Sense. Classifies study environments in real time — light, sound, and motion data processed into an 8-feature vector and inferred by a TFLite Micro model entirely on-chip.'},zh:{title:'FocusTomato',desc:'基于 XIAO ESP32-S3 Sense 的端侧番茄钟：光照、音量与加速度经 8 维统计特征提取后，在设备上通过 TFLite Micro 实时判别学习环境。'}},
   {color:'c4',
    img:'assets/catfeeding/catfeeding-0.webp',
+   video:'https://drive.google.com/file/d/1uZkeXHpC4BiWEvxUYPUGvsP9ljvaZRCp/preview',
    en:{
      title:'Cat Feeding Activity Monitor',
      desc:'Connected IoT system monitoring cat visits to a food bowl — PIR sensor + ESP-NOW wireless link + X27 stepper gauge, housed in 3D-printed yellow PLA enclosures. 90% detection accuracy in testing.',
@@ -682,9 +688,11 @@ const EXPERIMENTS=[
          {type:'solution',tag:'System',head:'Two-Device Connected Architecture',sub:'SENSING → ESP-NOW → PHYSICAL GAUGE.',
           body:'The system pairs two ESP32 devices over <strong>ESP-NOW</strong> (sub-10 ms latency).<br><br><strong>Sensing Device (ESP32-S3 + HC-SR501)</strong> — A PIR motion sensor detects cat movement near the food bowl. A debounce time window filters repeated triggers from a single visit so only valid events are counted, then broadcast wirelessly.<br><br><strong>Display Device (ESP32-C3 + X27 Motor)</strong> — Receives visit counts and maps them to a stepper motor gauge needle angle. An LED provides additional status feedback; a push button resets the counter. Powered by a 3.7V 500 mAh LiPo for ~20 days of typical use.',
           imgs:['assets/catfeeding/catfeeding-2-architecture.webp']},
+         {type:'video',tag:'Demo',head:'System in Action',sub:'SENSOR NEAR THE BOWL · DISPLAY ON THE TABLE.',
+          videoUrl:'https://drive.google.com/file/d/1uZkeXHpC4BiWEvxUYPUGvsP9ljvaZRCp/preview'},
          {type:'problem',tag:'Hardware',head:'Custom PCB & 3D-Printed Enclosures',sub:'KICAD PCB · YELLOW PLA · BREADBOARD DISPLAY.',
           body:'The sensing device uses a custom KiCad PCB hosting the Seeed XIAO ESP32-S3, decoupling capacitors (4.7 µF + 0.1 µF SMD), and a 510 Ω indicator LED — all in a compact yellow PLA enclosure sized to sit beside a cat bowl.<br><br>The display device is assembled on a breadboard with the XIAO ESP32-C3, X27.168 bipolar stepper motor, 330 Ω LED resistor, and an SPDT reset button — in a matching yellow enclosure with a circular gauge face.',
-          imgs:['assets/catfeeding/catfeeding-3-devices.webp']},
+          imgs:['assets/catfeeding/catfeeding-5-schematics.webp','assets/catfeeding/catfeeding-6-sensor.webp','assets/catfeeding/catfeeding-7-display.webp']},
          {type:'solution',tag:'Results',head:'Signal Processing & Performance',sub:'90% DETECTION ACCURACY · ~20-DAY BATTERY LIFE.',
           body:'Signal pipeline: <strong>PIR Signal → Debounce Threshold → Valid Motion Event → Activity Counter → Gauge Angle Mapping → Refill Reminder</strong>.<br><br>In testing, the system detected <strong>18 out of 20</strong> simulated bowl visits — an estimated detection accuracy of <strong>90%</strong>. Battery analysis shows ~<strong>19.8 days</strong> of typical use on a 500 mAh cell, with ESP-NOW radio transmission being the most power-sensitive phase.',
           imgs:['assets/catfeeding/catfeeding-4-signal.webp']},
@@ -710,16 +718,17 @@ const EXPERIMENTS=[
          {type:'solution',tag:'系统架构',head:'双设备无线连接架构',sub:'感知 → ESP-NOW → 物理仪表。',
           body:'系统由两个通过 <strong>ESP-NOW</strong>（延迟低于10ms）通信的ESP32设备组成。<br><br><strong>感知设备（ESP32-S3 + HC-SR501）</strong> — PIR传感器检测猫咪在食碗附近的运动，防抖时间窗过滤单次访碗产生的重复触发，仅统计有效运动事件后无线传输。<br><br><strong>显示设备（ESP32-C3 + X27电机）</strong> — 接收访碗次数并映射为步进电机仪表针角度，LED提供状态反馈，按钮重置计数。3.7V 500mAh锂电池供电，预计续航约20天。',
           imgs:['assets/catfeeding/catfeeding-2-architecture.webp']},
+         {type:'video',tag:'演示',head:'系统实际运行',sub:'感知设备置于食碗旁 · 显示设备放在桌面。',
+          videoUrl:'https://drive.google.com/file/d/1uZkeXHpC4BiWEvxUYPUGvsP9ljvaZRCp/preview'},
          {type:'problem',tag:'硬件',head:'定制PCB与3D打印外壳',sub:'KiCad PCB · 黄色PLA · 面包板显示端。',
           body:'感知设备采用定制KiCad PCB，搭载Seeed XIAO ESP32-S3、去耦电容（4.7µF + 0.1µF SMD）和510Ω指示LED，封装在可放置于猫碗旁的紧凑黄色PLA外壳中。<br><br>显示设备在面包板上组装，包含XIAO ESP32-C3、X27.168双极步进电机、330Ω限流电阻和SPDT重置按钮，外壳设计与感知端保持统一黄色造型，正面为圆形仪表盘。',
-          imgs:['assets/catfeeding/catfeeding-3-devices.webp']},
+          imgs:['assets/catfeeding/catfeeding-5-schematics.webp','assets/catfeeding/catfeeding-6-sensor.webp','assets/catfeeding/catfeeding-7-display.webp']},
          {type:'solution',tag:'成果',head:'信号处理与性能表现',sub:'检测准确率90% · 电池续航约20天。',
           body:'信号处理流程：<strong>PIR运动信号 → 防抖阈值 → 有效运动事件 → 活动计数器 → 仪表角度映射 → 补食提醒</strong>。<br><br>测试中系统在20次模拟访碗中检测到<strong>18次</strong>，估算检测准确率<strong>90%</strong>。电池分析显示500mAh电池在典型使用场景下续航约<strong>19.8天</strong>，功耗最敏感环节为ESP-NOW无线传输时的射频模块。',
           imgs:['assets/catfeeding/catfeeding-4-signal.webp']},
        ]
      }
    }},
-  {color:'c3',en:{title:'GIX Purchase Tracker',desc:'Three-page Streamlit app that replaced a shared Google Sheet for GIX lab hardware requests — form validation, a filterable status dashboard, and one-click CSV export. Deployed on Streamlit Cloud.'},zh:{title:'GIX 采购追踪器',desc:'三页 Streamlit 应用，替代杂乱的共享表格：带校验的采购申请表、可筛选的状态看板与一键 CSV 导出，部署在 Streamlit Cloud。'}},
 ];
 
 const TIMELINE=[
@@ -764,13 +773,21 @@ function renderExps(){
   document.getElementById('exp-list').innerHTML=EXPERIMENTS.map((e,i)=>{
     const d=e[L]||e.en;
     const hasCs=!!(e.en&&e.en.cs);
-    const clickAttr=hasCs?`onclick="openExpCase(${i})" style="cursor:pointer"`:'';
-    const overlay=hasCs?`<div class="img-overlay"><span class="img-overlay-lbl">${L==='en'?'View case study':'查看案例'}</span></div>`:'';
-    const imgCls=`exp-img ${e.color}${hasCs?' proj-img':''}`;
+    const hasVid=!!e.video;
+    let itemClick='',imgClick='',overlay='',csLink='';
+    if(hasVid){
+      imgClick=`onclick="openVideo('${e.video}')" style="cursor:pointer"`;
+      overlay=`<div class="img-overlay"><span class="img-overlay-lbl">▶ ${L==='en'?'Watch Demo':'播放演示'}</span></div>`;
+      if(hasCs) csLink=`<span class="view-cs" onclick="event.stopPropagation();openExpCase(${i})" style="display:inline-block;margin-top:14px">${L==='en'?'View case study →':'查看案例 →'}</span>`;
+    }else if(hasCs){
+      itemClick=`onclick="openExpCase(${i})" style="cursor:pointer"`;
+      overlay=`<div class="img-overlay"><span class="img-overlay-lbl">${L==='en'?'View case study':'查看案例'}</span></div>`;
+    }
+    const imgCls=`exp-img ${e.color}${(hasCs||hasVid)?' proj-img':''}`;
     const imgContent=e.img?`<img src="${e.img}" alt="${d.title}"/>`:`<span>${d.title} · image.jpg</span>`;
-    return `<div class="exp-item" ${clickAttr}>
-      <div class="exp-txt"><div class="exp-num">${pad(i+1)}</div><div class="exp-title">${d.title}</div><div class="exp-desc">${d.desc}</div></div>
-      <div class="exp-vis"><div class="${imgCls}">${imgContent}${overlay}</div></div>
+    return `<div class="exp-item" ${itemClick}>
+      <div class="exp-txt"><div class="exp-num">${pad(i+1)}</div><div class="exp-title">${d.title}</div><div class="exp-desc">${d.desc}</div>${csLink}</div>
+      <div class="exp-vis"><div class="${imgCls}" ${imgClick}>${imgContent}${overlay}</div></div>
     </div>`;
   }).join('');
 }
@@ -881,6 +898,14 @@ function openExpCase(idx){
         ${buildImg(s)}
       </div>`;
     }
+    if(s.type==='video'){
+      return `<div class="cs-sec">
+        <div class="cs-sec-tag">${s.tag||'Demo'}</div>
+        <div class="cs-sec-head">${s.head}</div>
+        <div class="cs-sec-sub">${s.sub}</div>
+        <div class="cs-video"><iframe src="${s.videoUrl}" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+      </div>`;
+    }
     return '';
   }).join('');
   const backSpan=document.querySelector('.back-btn span');
@@ -981,8 +1006,28 @@ function toggleLang(){
   renderAll();
 }
 
+function openVideo(url){
+  document.getElementById('vmodal-frame').src=url;
+  document.getElementById('vmodal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeVideo(e){
+  if(e&&e.type==='click'&&e.target!==document.getElementById('vmodal')&&!e.target.classList.contains('vmodal-close')) return;
+  document.getElementById('vmodal-frame').src='';
+  document.getElementById('vmodal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeVideo()});
+
 document.getElementById('yr').textContent=new Date().getFullYear();
 renderAll();
 </script>
+
+<div id="vmodal" class="vmodal" onclick="closeVideo(event)">
+  <div class="vmodal-inner" onclick="event.stopPropagation()">
+    <span class="vmodal-close" onclick="closeVideo()">✕ Close</span>
+    <iframe id="vmodal-frame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+</div>
 </body>
 </html>
