@@ -467,6 +467,66 @@ const PROJECTS=[
              body:'<strong>后端</strong> — FastAPI（Python 3.11）、SQLAlchemy + SQLite 管理结构化数据、ChromaDB 按领域独立的向量集合，使用 sentence-transformers 做嵌入。<br><strong>LLM 层</strong> — Anthropic Claude API 驱动采访生成、知识合成、意图分类和领域智能体回答。<br><strong>前端</strong> — React + Vite + Tailwind CSS。<br><strong>评测</strong> — 标准化基准测试 REST API（/api/v1/）支持在相同输入下对所有参赛团队进行自动化测评，覆盖有依据的问答准确率、路由精度、闭卷拒答率、合成质量与 token 效率等指标。',
              img:'assets/thoth/thoth-2-sme-submit-history.png'},
           ]}}},
+  {color:'c4',
+  img:'assets/litterbox/litterbox-0.webp',
+  en:{title:'Smart Cat Litter Box',date:'2026.01 – 2026.06',cat:'IoT · Edge ML · Embedded',
+      desc:'A semester-long connected-device system for multi-cat homes — load-cell visit logging, on-device cat ID, and a live health dashboard. Built around two ESP32-S3 nodes, trained on our own cats, and documented end to end.',
+      tags:['ESP32-S3 · HX711','Edge Impulse · ESP-NOW','MQTT · Streamlit','Python · Arduino'],
+      cs:{subtitle:'TECHIN 515 Final Project · Connected Devices · Team of 3 · Spring 2026',
+          overview:'Most litter boxes tell you nothing. Ours records every visit from two real cats — Wesley and Pupu — and turns each trip into structured data: who came, how long they stayed, how much they weigh, and whether anything looks off. We split the work across a weight node and a camera node, fused their readings over ESP-NOW, and pushed everything to a Streamlit dashboard over MQTT. Along the way we wrote two production firmware images, trained and deployed an Edge Impulse model on the device, built a health analytics layer in Python, and 3D-printed the enclosure. The repo holds milestone reports, bilingual ML guides, test photos, and 28 commits of iteration.',
+          meta:[{l:'Timeline',v:'Jan – Jun 2026'},{l:'Role',v:'Firmware, dashboard & system integration · Team of 3'},{l:'Team',v:'Xin Luo · Yuna Xiong · Mengqi Shi'},{l:'Stack',v:'ESP32-S3 · HX711 · OV2640 · Edge Impulse · ESP-NOW · MQTT · Streamlit'},{l:'GitHub',v:'TECHIN515_final_project_smart_litter_box',link:'https://github.com/MengqiS21/TECHIN515_final_project_smart_litter_box.git'}],
+          sections:[
+            {type:'problem',tag:'Background',head:'Why we built it',sub:'Two cats, one box, no usable record.',
+             body:'If you live with more than one cat, you know the problem: you notice the litter box was used, but not by whom. Weight can drift for weeks before anyone catches it. Bathroom habits — frequency, duration, changes in waste — are even harder to track by eye.<br><br>We did not want another generic pet camera. We wanted a single visit record that ties <em>identity</em>, <em>weight</em>, and <em>time</em> together, running on hardware we could actually deploy at home. Wesley (~4.3 kg) and Pupu (~4.7 kg) became our test subjects — and our training dataset.',
+             img:'assets/litterbox/litterbox-1-problem.webp'},
+            {type:'solution',tag:'Process',head:'How the project took shape',sub:'Milestones, not a single sprint.',
+             body:'TECHIN 515 pushed us to treat this like a real product cycle. Milestone 1 was sensor validation: HX711 wiring, EEPROM calibration, and a formal weight-sensor test report. Milestone 2 added vision — camera bring-up on the XIAO ESP32S3 Sense, PIR-triggered SD capture, and hundreds of labeled photos per cat. Only then did we train on Edge Impulse, merge the two nodes, and stand up the dashboard.<br><br>The repository reflects that progression: calibration sketches, PIR data-capture firmware, two exported inference libraries, enclosure STL files, budget docs, and step-by-step Chinese setup guides for anyone repeating the ML pipeline.',
+             img:'assets/litterbox/litterbox-2-architecture.webp'},
+            {type:'problem',tag:'Architecture',head:'Two boards, one visit record',sub:'Weight senses the event; camera names the cat.',
+             body:'Early on we hit a practical constraint — HX711 data and PIR motion cannot share the same GPIO. So we gave each job its own ESP32-S3.<br><br>The <strong>camera node</strong> watches for motion, captures QVGA frames, and runs MobileNetV2 inference on-device. When it is confident, it sends a small ESP-NOW packet to the weight board with a cat ID and score.<br><br>The <strong>weight node</strong> owns the load cell. It maintains a smart baseline so litter drift does not swamp the signal, runs a five-state visit detector, and fuses the camera result when a packet arrived within the last 45 seconds. If vision fails — cat already on the scale, bad light, low confidence — it falls back to weight-based ID within a ±300 g window.<br><br>Finished visits publish as JSON over MQTT; the laptop dashboard subscribes and updates in real time. No custom server required.',
+             img:'assets/litterbox/litterbox-3-hardware.webp'},
+            {type:'video',tag:'Demo',head:'System demo',sub:'From motion to dashboard in one visit.',
+             videoUrl:'https://drive.google.com/file/d/1hDMzisH_7M_pPtzt1BHM_xqPRuSqdBJD/preview'},
+            {type:'solution',tag:'Edge ML',head:'Training cats we actually live with',sub:'Dataset, Edge Impulse, and making inference fit on-chip.',
+             body:'We collected training images with PIR-triggered bursts to SD card, then labeled two classes per cat — 150+ images each, split for Edge Impulse transfer learning. The impulse uses 96×96 RGB input, MobileNetV2 0.1, int8 quantization, and data augmentation. Test accuracy landed above our 85% bar before we exported the Arduino library.<br><br>Deployment was its own engineering task. ESP32-S3 needs PSRAM enabled; we overrode <code>ei_calloc</code> to route tensor memory into SPIRAM and patched the inference arena with a shell script so the model would not exhaust DRAM mid-run. We shipped two firmware variants — a two-class production build and a three-class version that also recognizes an empty box.',
+             imgs:['assets/litterbox/litterbox-4-edge-ml.webp','assets/litterbox/litterbox-4-training.webp']},
+            {type:'problem',tag:'Dashboard',head:'What the owner actually sees',sub:'Live weight, visit history, and early warnings.',
+             body:'The Streamlit app was designed for daily use, not a one-off demo. A background MQTT thread streams gram readings every half second; the UI auto-zeros a stable empty platform and accepts a remote tare command back to the firmware.<br><br>Each visit surfaces as a row: cat name, whether ID came from camera or weight, confidence, duration, estimated body weight, and waste delta. Wesley and Pupu get separate 14-day trend lines. Rule-based alerts flag unusual frequency, long stays, low confidence, or a sudden weight drop — the kind of pattern you would want to notice before it becomes obvious.<br><br>Behind the UI, <code>health_analyzer.py</code> can log visits to CSV and run longer-horizon checks: seven-day weight slopes, Z-score outliers, and Isolation Forest on multi-feature records when enough history exists.'},
+            {type:'solution',tag:'Outcome',head:'What we shipped',sub:'Firmware, model, enclosure, and docs — together.',
+             body:'By the end of the term we had a working closed loop: PIR → inference → ESP-NOW → visit state machine → MQTT → dashboard. Remote tare works from the UI. Calibration persists in EEPROM. The 3D-printed base holds the load-cell platform; milestone photos and test reports are in the repo.<br><br>This was not a mockup. It is two firmware codebases (~60% C++), a full Python monitoring layer (~39%), bilingual ML documentation, and a demo we recorded on the hardware we built.',
+             img:'assets/litterbox/litterbox-6-visit-flow.webp'},
+            {type:'problem',tag:'Reflection',head:'What we learned',sub:'Split the problem; fuse at the edge.',
+             body:'The GPIO conflict forced a cleaner architecture than we would have chosen on day one — and it paid off. ESP-NOW kept camera latency off the critical weigh path; MQTT kept the laptop side simple.<br><br>If we continued the project, we would add persistent storage beyond the Streamlit session, move MQTT to a private broker, and integrate the camera sightline into the printed enclosure so setup is less finicky. For a course prototype, though, we got what we set out to build: a litter box that remembers what we cannot.'},
+          ]}},
+  zh:{title:'智能猫砂盆',date:'2026.01 – 2026.06',cat:'物联网 · 边缘机器学习 · 嵌入式',
+      desc:'面向多猫家庭的学期期末项目——称重记录如厕、端侧识别个体、实时健康仪表盘；双 ESP32 节点、自采训练数据、从固件到文档完整交付。',
+      tags:['ESP32-S3 · HX711','Edge Impulse · ESP-NOW','MQTT · Streamlit','Python · Arduino'],
+      cs:{subtitle:'TECHIN 515 期末项目 · Connected Devices · 三人小组 · 2026 春季',
+          overview:'普通猫砂盆不会留下任何记录。我们的系统围绕家里两只真实的猫——Wesley 和 Pupu——把每次如厕变成可查询的数据：谁来了、待了多久、体重多少、有没有异常迹象。称重节点负责事件检测，摄像头节点负责认猫，两者经 ESP-NOW 融合后由 MQTT 推送到 Streamlit 仪表盘。一个学期里我们交付了两套生产固件、端侧 Edge Impulse 模型、Python 健康分析层和 3D 打印结构件；仓库里有里程碑报告、中英文 ML 教程、测试照片和 28 次迭代的提交记录。',
+          meta:[{l:'周期',v:'2026.01 – 2026.06'},{l:'身份',v:'固件、仪表盘与系统集成 · 三人小组'},{l:'团队',v:'Xin Luo · Yuna Xiong · Mengqi Shi'},{l:'技术栈',v:'ESP32-S3 · HX711 · OV2640 · Edge Impulse · ESP-NOW · MQTT · Streamlit'},{l:'GitHub',v:'TECHIN515_final_project_smart_litter_box',link:'https://github.com/MengqiS21/TECHIN515_final_project_smart_litter_box.git'}],
+          sections:[
+            {type:'problem',tag:'背景',head:'为什么要做',sub:'两只猫、一个盆、没有可用的记录。',
+             body:'多猫家庭都有同感：知道猫砂盆被用过了，却不知道是哪只。体重变化往往几周后才被注意到；如厕频率、停留时长、排泄量的变化，靠肉眼更难追踪。<br><br>我们不想再做一只「宠物摄像头」。目标是一条能把<strong>身份、体重、时间</strong>绑在一起的访问记录，而且硬件要能真正放在家里跑。Wesley（约 4.3 kg）和 Pupu（约 4.7 kg）既是测试对象，也是训练数据的来源。',
+             img:'assets/litterbox/litterbox-1-problem.webp'},
+            {type:'solution',tag:'过程',head:'项目是怎么长出来的',sub:'按里程碑推进，而不是一次冲刺。',
+             body:'TECHIN 515 要求我们把项目当产品周期来做。里程碑一验证传感器：HX711 接线、EEPROM 校准、正式的称重测试报告。里程碑二接入视觉——在 XIAO ESP32S3 Sense 上点亮摄像头，用 PIR 触发 SD 卡连拍，为每只猫积累上百张标注照片。之后才在 Edge Impulse 上训练、合并双节点、搭起仪表盘。<br><br>仓库里的目录结构也对应这条路径：校准草图、PIR 采集固件、两套导出的推理库、外壳 STL、预算文档，以及可复现 ML 流程的中文分步指南。',
+             img:'assets/litterbox/litterbox-2-architecture.webp'},
+            {type:'problem',tag:'架构',head:'两块板子，一条访问记录',sub:'称重感知事件，摄像头认出是谁。',
+             body:'很早就遇到一个硬约束：HX711 数据线和 PIR 信号不能共用同一个 GPIO。于是称重和视觉各用一块 ESP32-S3。<br><br><strong>摄像头节点</strong>负责发现动作、抓取 QVGA 画面，在本地跑 MobileNetV2 推理；置信度足够时，经 ESP-NOW 把猫 ID 和分数发给称重板。<br><br><strong>称重节点</strong>掌管负载传感器，用智能基线抵消猫砂漂移，用五状态机判断一次完整如厕，并在 45 秒内收到的摄像头数据包上做融合。视觉失效时——猫已经站上秤、光线差、置信度低——退回到 ±300 g 体重窗口内的识别。<br><br>完成的访问以 JSON 经 MQTT 发出，电脑端仪表盘实时订阅，无需自建后端。',
+             img:'assets/litterbox/litterbox-3-hardware.webp'},
+            {type:'video',tag:'演示',head:'系统演示',sub:'一次如厕，从动作到仪表盘。',
+             videoUrl:'https://drive.google.com/file/d/1hDMzisH_7M_pPtzt1BHM_xqPRuSqdBJD/preview'},
+            {type:'solution',tag:'边缘 AI',head:'用自家猫训练自家模型',sub:'数据集、Edge Impulse，以及把推理塞进芯片。',
+             body:'训练图用 PIR 触发连拍写入 SD 卡，再按猫分文件夹标注——每只 150 张以上，在 Edge Impulse 上做迁移学习。Impulse 采用 96×96 RGB 输入、MobileNetV2 0.1、int8 量化与数据增强；测试集准确率超过 85% 后才导出 Arduino 库。<br><br>上板是另一项工程：ESP32-S3 必须开 PSRAM；我们重写 <code>ei_calloc</code> 把张量内存导向 SPIRAM，并用脚本修补推理 arena，避免运行中 DRAM 耗尽。最终交付两套固件——二类生产版，以及能识别空盆的三分类版本。',
+             imgs:['assets/litterbox/litterbox-4-edge-ml.webp','assets/litterbox/litterbox-4-training.webp']},
+            {type:'problem',tag:'仪表盘',head:'主人真正看到的东西',sub:'实时重量、访问记录与早期提醒。',
+             body:'Streamlit 界面按日常使用来设计，不是一次性 demo。后台 MQTT 线程每半秒更新克重读数；界面会对稳定的空盆自动去皮，也能把去皮指令发回固件。<br><br>每次访问对应一行记录：猫名、识别来源（摄像头或体重）、置信度、时长、估算体重与排泄增量。Wesley 和 Pupu 各有 14 天趋势曲线。规则引擎会对异常频次、过长停留、低置信度或体重骤降发出提醒——那些你希望在变得明显之前就能注意到的信号。<br><br>界面背后，<code>health_analyzer.py</code> 可把访问写入 CSV，做更长期的分析：七天体重斜率、Z-score 异常点，以及数据量足够时的 Isolation Forest 多特征检测。'},
+            {type:'solution',tag:'成果',head:'我们交付了什么',sub:'固件、模型、结构件与文档，一并落地。',
+             body:'学期末我们跑通了完整闭环：PIR → 推理 → ESP-NOW → 访问状态机 → MQTT → 仪表盘。UI 远程去皮可用，校准值写入 EEPROM，3D 打印底座承载称重平台；里程碑照片与测试报告都在仓库里。<br><br>这不是概念稿。两套固件（约 60% C++）、完整的 Python 监测层（约 39%）、双语 ML 文档，以及在我们自己硬件上录制的演示视频，都是实际产出。',
+             img:'assets/litterbox/litterbox-6-visit-flow.webp'},
+            {type:'problem',tag:'反思',head:'我们学到了什么',sub:'拆开问题，在边缘融合。',
+             body:'GPIO 冲突逼出的双板架构，比第一天设想得更清晰，效果也更好。ESP-NOW 把摄像头延迟挡在称重主路径之外；MQTT 让电脑端保持简单。<br><br>若继续做下去，会给 Streamlit 加上持久化存储、换私有 MQTT broker，并把摄像头视野整合进打印外壳，减少现场调试。作为课程原型，我们实现了最初的目标：一只会替我们记住细节的猫砂盆。'},
+          ]}}},
   {color:'c2',
   img:'assets/safecompanion/safecompanion-2-0.webp',
    en:{title:'SafeCompanion',date:'2024.7 – 2024.10',cat:'UX · IoT · UI',
@@ -976,7 +1036,8 @@ function openExpCase(idx){
         <div class="cs-sec-tag">${s.tag||'Demo'}</div>
         <div class="cs-sec-head">${s.head}</div>
         <div class="cs-sec-sub">${s.sub}</div>
-        <div class="cs-video"><iframe src="${s.videoUrl}" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+        <div class="cs-video"><iframe src="${s.videoUrl}" title="${s.head}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div>
+        <p style="margin-top:12px;font-size:.84rem;line-height:1.7;color:var(--mid)">${L==='en'?'If the embedded player does not load,':'如果内嵌播放器无法加载，'} <a href="${s.videoUrl.replace(/\/preview$/, '/view')}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">${L==='en'?'open the demo in a new window ↗':'在新窗口播放演示 ↗'}</a></p>
       </div>`;
     }
     return '';
@@ -1054,6 +1115,14 @@ function openCase(idx){
             <div class="cs-deliv-title">${it.t}</div>
             <div class="cs-deliv-desc">${it.d}</div>
           </div>`).join('')}</div>
+      </div>`;
+    if(s.type==='video') return `
+      <div class="cs-sec">
+        <div class="cs-sec-tag">${s.tag||'Demo'}</div>
+        <div class="cs-sec-head">${s.head}</div>
+        <div class="cs-sec-sub">${s.sub}</div>
+        <div class="cs-video"><iframe src="${s.videoUrl}" title="${s.head}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div>
+        <p style="margin-top:12px;font-size:.84rem;line-height:1.7;color:var(--mid)">${L==='en'?'If the embedded player does not load,':'如果内嵌播放器无法加载，'} <a href="${s.videoUrl.replace(/\/preview$/, '/view')}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">${L==='en'?'open the demo in a new window ↗':'在新窗口播放演示 ↗'}</a></p>
       </div>`;
     return '';
   }).join('');

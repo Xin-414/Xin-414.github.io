@@ -1,0 +1,33 @@
+{
+  "repository": "https://github.com/MengqiS21/TECHIN515_final_project_smart_litter_box",
+  "images": [
+    {
+      "file": "litterbox-0.webp",
+      "source": "Milestone2/Smart_Cat_Litter_Box_Milestone2.pdf#page=1"
+    },
+    {
+      "file": "litterbox-1-problem.webp",
+      "source": "Milestone2/Smart_Cat_Litter_Box_Milestone2.pdf#page=2"
+    },
+    {
+      "file": "litterbox-2-architecture.webp",
+      "source": "Milestone2/Smart_Cat_Litter_Box_Milestone2.pdf#page=4"
+    },
+    {
+      "file": "litterbox-3-hardware.webp",
+      "source": "Milestone1/Mimlestone1_Slide.pdf#page=4"
+    },
+    {
+      "file": "litterbox-6-visit-flow.webp",
+      "source": "Milestone2/Smart_Cat_Litter_Box_Milestone2.pdf#page=3"
+    },
+    {
+      "file": "litterbox-4-edge-ml.webp",
+      "source": "ML screenshot/1-img feature.png"
+    },
+    {
+      "file": "litterbox-4-training.webp",
+      "source": "ML screenshot/5-accuracy int8.png"
+    }
+  ]
+}
