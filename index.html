@@ -242,7 +242,9 @@ nav.scrolled{box-shadow:0 1px 24px rgba(0,0,0,.07)}
 .vmodal-close:hover{color:#fff}
 .vmodal iframe{width:100%;height:100%;border:none}
 .cs-video{margin-top:26px;width:100%;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
-.cs-video iframe{width:100%;height:100%;border:none}
+.cs-video iframe,.cs-video video{width:100%;height:100%;border:none;background:#000}
+.cs-video video{object-fit:contain}
+.cs-video.portrait{aspect-ratio:9/16;max-width:420px;margin-left:auto;margin-right:auto}
 
 /* ══ FOOTER ══ */
 footer{border-top:1px solid var(--border);padding:22px 0}
@@ -486,7 +488,7 @@ const PROJECTS=[
              body:'Early on we hit a practical constraint — HX711 data and PIR motion cannot share the same GPIO. So we gave each job its own ESP32-S3.<br><br>The <strong>camera node</strong> watches for motion, captures QVGA frames, and runs MobileNetV2 inference on-device. When it is confident, it sends a small ESP-NOW packet to the weight board with a cat ID and score.<br><br>The <strong>weight node</strong> owns the load cell. It maintains a smart baseline so litter drift does not swamp the signal, runs a five-state visit detector, and fuses the camera result when a packet arrived within the last 45 seconds. If vision fails — cat already on the scale, bad light, low confidence — it falls back to weight-based ID within a ±300 g window.<br><br>Finished visits publish as JSON over MQTT; the laptop dashboard subscribes and updates in real time. No custom server required.',
              img:'assets/litterbox/litterbox-3-hardware.webp'},
             {type:'video',tag:'Demo',head:'System demo',sub:'From motion to dashboard in one visit.',
-             videoUrl:'https://drive.google.com/file/d/1hDMzisH_7M_pPtzt1BHM_xqPRuSqdBJD/preview'},
+             videoUrl:'https://drive.google.com/file/d/1hDMzisH_7M_pPtzt1BHM_xqPRuSqdBJD/preview',videoSrc:'assets/litterbox/litterbox-demo.mp4'},
             {type:'solution',tag:'Edge ML',head:'Training cats we actually live with',sub:'Dataset, Edge Impulse, and making inference fit on-chip.',
              body:'We collected training images with PIR-triggered bursts to SD card, then labeled two classes per cat — 150+ images each, split for Edge Impulse transfer learning. The impulse uses 96×96 RGB input, MobileNetV2 0.1, int8 quantization, and data augmentation. Test accuracy landed above our 85% bar before we exported the Arduino library.<br><br>Deployment was its own engineering task. ESP32-S3 needs PSRAM enabled; we overrode <code>ei_calloc</code> to route tensor memory into SPIRAM and patched the inference arena with a shell script so the model would not exhaust DRAM mid-run. We shipped two firmware variants — a two-class production build and a three-class version that also recognizes an empty box.',
              imgs:['assets/litterbox/litterbox-4-edge-ml.webp','assets/litterbox/litterbox-4-training.webp']},
@@ -515,7 +517,7 @@ const PROJECTS=[
              body:'很早就遇到一个硬约束：HX711 数据线和 PIR 信号不能共用同一个 GPIO。于是称重和视觉各用一块 ESP32-S3。<br><br><strong>摄像头节点</strong>负责发现动作、抓取 QVGA 画面，在本地跑 MobileNetV2 推理；置信度足够时，经 ESP-NOW 把猫 ID 和分数发给称重板。<br><br><strong>称重节点</strong>掌管负载传感器，用智能基线抵消猫砂漂移，用五状态机判断一次完整如厕，并在 45 秒内收到的摄像头数据包上做融合。视觉失效时——猫已经站上秤、光线差、置信度低——退回到 ±300 g 体重窗口内的识别。<br><br>完成的访问以 JSON 经 MQTT 发出，电脑端仪表盘实时订阅，无需自建后端。',
              img:'assets/litterbox/litterbox-3-hardware.webp'},
             {type:'video',tag:'演示',head:'系统演示',sub:'一次如厕，从动作到仪表盘。',
-             videoUrl:'https://drive.google.com/file/d/1hDMzisH_7M_pPtzt1BHM_xqPRuSqdBJD/preview'},
+             videoUrl:'https://drive.google.com/file/d/1hDMzisH_7M_pPtzt1BHM_xqPRuSqdBJD/preview',videoSrc:'assets/litterbox/litterbox-demo.mp4'},
             {type:'solution',tag:'边缘 AI',head:'用自家猫训练自家模型',sub:'数据集、Edge Impulse，以及把推理塞进芯片。',
              body:'训练图用 PIR 触发连拍写入 SD 卡，再按猫分文件夹标注——每只 150 张以上，在 Edge Impulse 上做迁移学习。Impulse 采用 96×96 RGB 输入、MobileNetV2 0.1、int8 量化与数据增强；测试集准确率超过 85% 后才导出 Arduino 库。<br><br>上板是另一项工程：ESP32-S3 必须开 PSRAM；我们重写 <code>ei_calloc</code> 把张量内存导向 SPIRAM，并用脚本修补推理 arena，避免运行中 DRAM 耗尽。最终交付两套固件——二类生产版，以及能识别空盆的三分类版本。',
              imgs:['assets/litterbox/litterbox-4-edge-ml.webp','assets/litterbox/litterbox-4-training.webp']},
@@ -1036,8 +1038,8 @@ function openExpCase(idx){
         <div class="cs-sec-tag">${s.tag||'Demo'}</div>
         <div class="cs-sec-head">${s.head}</div>
         <div class="cs-sec-sub">${s.sub}</div>
-        <div class="cs-video"><iframe src="${s.videoUrl}" title="${s.head}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div>
-        <p style="margin-top:12px;font-size:.84rem;line-height:1.7;color:var(--mid)">${L==='en'?'If the embedded player does not load,':'如果内嵌播放器无法加载，'} <a href="${s.videoUrl.replace(/\/preview$/, '/view')}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">${L==='en'?'open the demo in a new window ↗':'在新窗口播放演示 ↗'}</a></p>
+        <div class="cs-video${s.videoSrc ? ' portrait' : ''}">${s.videoSrc ? `<video controls playsinline preload="metadata" aria-label="${s.head}"><source src="${s.videoSrc}" type="video/mp4"/></video>` : `<iframe src="${s.videoUrl}" title="${s.head}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`}</div>
+        <p style="margin-top:12px;font-size:.84rem;line-height:1.7;color:var(--mid)">${L==='en'?'Original video:':'原始视频：'} <a href="${s.videoUrl.replace(/\/preview$/, '/view')}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">${L==='en'?'open the demo in a new window ↗':'在新窗口播放演示 ↗'}</a></p>
       </div>`;
     }
     return '';
@@ -1121,8 +1123,8 @@ function openCase(idx){
         <div class="cs-sec-tag">${s.tag||'Demo'}</div>
         <div class="cs-sec-head">${s.head}</div>
         <div class="cs-sec-sub">${s.sub}</div>
-        <div class="cs-video"><iframe src="${s.videoUrl}" title="${s.head}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div>
-        <p style="margin-top:12px;font-size:.84rem;line-height:1.7;color:var(--mid)">${L==='en'?'If the embedded player does not load,':'如果内嵌播放器无法加载，'} <a href="${s.videoUrl.replace(/\/preview$/, '/view')}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">${L==='en'?'open the demo in a new window ↗':'在新窗口播放演示 ↗'}</a></p>
+        <div class="cs-video${s.videoSrc ? ' portrait' : ''}">${s.videoSrc ? `<video controls playsinline preload="metadata" aria-label="${s.head}"><source src="${s.videoSrc}" type="video/mp4"/></video>` : `<iframe src="${s.videoUrl}" title="${s.head}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`}</div>
+        <p style="margin-top:12px;font-size:.84rem;line-height:1.7;color:var(--mid)">${L==='en'?'Original video:':'原始视频：'} <a href="${s.videoUrl.replace(/\/preview$/, '/view')}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">${L==='en'?'open the demo in a new window ↗':'在新窗口播放演示 ↗'}</a></p>
       </div>`;
     return '';
   }).join('');
